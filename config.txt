@@ -1,0 +1,17 @@
+noOfClients
+3
+
+client1
+Add Ahmed-1000
+end
+
+client2
+Add Mohamed-2000
+end
+
+client3
+Delete Ahmed
+Add Yasser-5000
+Modify Yasser-+500
+Modify Yasser--100
+end

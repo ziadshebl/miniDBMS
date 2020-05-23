@@ -12,9 +12,9 @@
 
 
 
-
 //MAIN Function.
 int main(){
+
 
 FILE * LoggingOutputFile= fopen("LoggingOutputFile","w+");
 
@@ -28,10 +28,12 @@ timeInfo = localtime(&rawtime);
 strftime(timeBuffer,80,"%c:\t", timeInfo);
 
 
+//Printing the current time in the database
 fputs(timeBuffer, LoggingOutputFile);
 
 
 
 fclose(LoggingOutputFile);   
+printf("I am the logger\n");
 
 }
