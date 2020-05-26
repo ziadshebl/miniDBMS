@@ -27,12 +27,14 @@ int main(){
     char numberOfClientsCharacter[maxNumberOfCharToBeRead];
     char databaseSharedMemoryChar[10];
     char clientManagerMsgQidChar[10];
+    char dbManagerPIDChar[5];
     int numberOfClients;
     int lineNumber;
     int totalNumberOfChildren;
     int pid;
     int clientManagerMsgQid;// The id for the buffer between client and the database manager
     int databaseSharedMemory;
+    int dbManagerPID;
 
 
     clientManagerMsgQid = msgget(IPC_PRIVATE, 0644); // Initiallizing the buffer between client and the database manager
@@ -71,6 +73,7 @@ int main(){
             }
             else if(child == 2 && pid==0)
             {
+                dbManagerPID = pid;
                 sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
                 sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
                 char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,0};
@@ -80,9 +83,10 @@ int main(){
             {
                 sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
                 sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
+                sprintf(dbManagerPIDChar,"%d",dbManagerPID);
                 char clientNumber[2];
                 sprintf(clientNumber, "%d", numberOfClients+1);
-                char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar, 0};
+                char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar ,0};
                 execve(argv[0], &argv[0], NULL);
                 
             }
