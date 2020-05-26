@@ -74,3 +74,9 @@ struct AllOperations
    struct modifyRecordMsgBuffer  modifyBuffer;
    struct retrieveMsgBuffer  retrieveBuffer;
 };
+
+struct clientManagerMsgBuffer
+{
+   long mtype;
+   struct AllOperations operationMessage;
+};

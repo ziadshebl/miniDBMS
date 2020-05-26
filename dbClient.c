@@ -26,6 +26,7 @@ int main(int argc, char*argv[])
 {
     int clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
+    int dbManagerPID = atoi(argv[4]);
     int databaseSharedMemory = atoi (argv[2]);
     char clientStart[8]="client";
     char clientEnd[11]="endClient";
@@ -60,6 +61,8 @@ int main(int argc, char*argv[])
             
             strcpy(toAddBuffer.name,empName);
             toAddBuffer.salary=empSalary;
+            toAddBuffer.clientNumber=clientNumber;
+            toAddBuffer.mtype=dbManagerPID;
             
             clientOperations[operationCounter].addMsgBuffer=toAddBuffer;
             operationCounter++;
@@ -249,7 +252,24 @@ int main(int argc, char*argv[])
     }
 
 
-    //printf("Name: %s    Salar:  %s"clientOperations[0].addMsgBuffer.name, clientOperations[0].addMsgBuffer.salary, clientOperations[0].addMsgBuffer.clientNumber)
+    /*for (int operation; operation< operationCounter; operation++)
+    {
+        struct clientManagerMsgBuffer toSend;
+        int send_val;
+        toSend.mtype = dbManagerPID;
+        toSend.operationMessage=clientOperations[operation];
+        send_val = msgsnd(clientManagerMsgQ, &toSend, sizeof(toSend.operationMessage), !IPC_NOWAIT);
+        if(send_val < 0)
+        {
+
+        }
+        else
+        {
+            /* code */
+        }
+        
+    }*/
+    //printf("Name: %s    Salary:  %d     Client: %d\n",clientOperations[0].addMsgBuffer.name, clientOperations[0].addMsgBuffer.salary, clientOperations[0].addMsgBuffer.clientNumber);
 
 
 
