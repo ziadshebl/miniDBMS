@@ -252,7 +252,7 @@ int main(int argc, char*argv[])
     }
 
 
-    /*for (int operation; operation< operationCounter; operation++)
+    for (int operation; operation< operationCounter; operation++)
     {
         struct clientManagerMsgBuffer toSend;
         int send_val;
@@ -265,10 +265,10 @@ int main(int argc, char*argv[])
         }
         else
         {
-            /* code */
+            printf("MESSAGE SENT SUCCESSFULLY\n");
         }
         
-    }*/
+    }
     //printf("Name: %s    Salary:  %d     Client: %d\n",clientOperations[0].addMsgBuffer.name, clientOperations[0].addMsgBuffer.salary, clientOperations[0].addMsgBuffer.clientNumber);
 
 
