@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "msgbuffers.h"
+//#include "record.h"
 
 
 #define configfileName "config.txt"

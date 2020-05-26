@@ -2,20 +2,14 @@ noOfClients
 3
 
 client1
-Add	Ahmed Mohamed	1000
-Retrieve	Name:	Any	Salary: <500
-Retrieve	Name:	Yasser	Salary: >500
-Retrieve	Name:	Any	Salary: =500
-Retrieve	Name:	Any	Salary: >=500
-Retrieve	Name:	Any	Salary: <=500
+Add	AbdelrahmanEmam	1000
+Add	ZiadKamal	800
 endClient1
 
 client2
-Add	Mohamed	2000
+Add	KarimWael	2000
 endClient2
 
 client3
-Add	Yasser	5000
-Modify	122	+500
-Modify	212	-100
+Add	NadaKhaled	5000
 endClient3
