@@ -74,6 +74,7 @@ int main(){
             else if(child == 2 && pid==0)
             {
                 dbManagerPID = pid;
+                printf("ID: %d\n",dbManagerPID);
                 sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
                 sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
                 char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,0};
