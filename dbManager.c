@@ -11,10 +11,10 @@
 #include "msgbuffers.h"
 
 
-
+struct clientManagerMsgBuffer message;
 //MAIN Function.
 int main(int argc, char*argv[]){
-    AllOperationsPointers message;
+     
     //Getting the message q id and the shared memory id.
     int sharedMemoryId = atoi(argv[1]);
     int ManagerClientMessageQid = atoi(argv[2]);
@@ -31,8 +31,8 @@ int main(int argc, char*argv[]){
 }
 void Recieve()
 {
-    while(msgrcv(ManagerClientMessageQid, &message, sizeof(message.), getpid(), !IPC_NOWAIT))
+    while(msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), !IPC_NOWAIT)!=-1)
     {
-
     }
+    
 }
