@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "msgbuffers.h"
+//#include "record.h"
 
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024
@@ -26,8 +27,8 @@ int main(){
     int lineNumber;
     int totalNumberOfChildren;
     int pid;
-
-
+    struct record recordTemp;
+    printf("struct size : %lu\n",sizeof(pid)); 
     //Reading the number of clients from the configuration file
     lineNumber = searchForAWord("noOfClients");
     readFromALine(lineNumber+1, numberOfClientsCharacter);

@@ -106,10 +106,35 @@ int main(int argc, char*argv[])
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
                 } 
                 empSalary = atoi(empSalaryCharWithoutOperator);
-                strcpy(toRetrieveBuffer.name, empSalaryCharWithoutOperator);
+                strcpy(toRetrieveBuffer.name, empName);
                 toRetrieveBuffer.salaryOperation=smallerThan;
                 toRetrieveBuffer.salary=empSalary;
-                if(empName=="Any")
+                if(strcmp(empName, "Any")==0)
+                {
+                    toRetrieveBuffer.operation=salaryOnly;
+                    
+                }
+                else
+                {
+                    toRetrieveBuffer.operation=nameAndSalary;
+                }
+                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                operationCounter++;
+                
+               
+            }
+            else if(empSalaryChar[0]=='>' && empSalaryChar[1]!='=')
+            {
+                struct retrieveMsgBuffer toRetrieveBuffer;
+                char empSalaryCharWithoutOperator[7];
+                for (int character=0; character<7; character++){
+                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
+                }
+                empSalary = atoi(empSalaryCharWithoutOperator);
+                strcpy(toRetrieveBuffer.name, empName);
+                toRetrieveBuffer.salaryOperation=biggerThan;
+                toRetrieveBuffer.salary=empSalary;
+                if(strcmp(empName, "Any")==0)
                 {
                     toRetrieveBuffer.operation=salaryOnly;
                     printf("SALARY ONLY\n");
@@ -117,46 +142,97 @@ int main(int argc, char*argv[])
                 else
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
+                    printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
+                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                operationCounter++;
                 
-                printf("LESS THAN FOUNDED %s\n", empName);
-            }
-            else if(empSalaryChar[0]=='>' && empSalaryChar[1]!='=')
-            {
-                char empSalaryCharWithoutOperator[7];
-                for (int character=0; character<7; character++){
-                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
-                }
-                empSalary = atoi(empSalaryCharWithoutOperator);
-                printf("LARGER THAN FOUNDED %d\n", empSalary);
             }
             else if(empSalaryChar[0]=='=')
             {
+                struct retrieveMsgBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[7];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
                 }
                 empSalary = atoi(empSalaryCharWithoutOperator);
-                printf("EQUAL FOUNDED %d\n", empSalary);
+                strcpy(toRetrieveBuffer.name, empName);
+                toRetrieveBuffer.salaryOperation=equal;
+                toRetrieveBuffer.salary=empSalary;
+                if(strcmp(empName, "Any")==0)
+                {
+                    toRetrieveBuffer.operation=salaryOnly;
+                    //printf("SALARY ONLY\n");
+                }
+                else
+                {
+                    toRetrieveBuffer.operation=nameAndSalary;
+                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+                }
+                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                operationCounter++;
+                
+                
             }
             else if(empSalaryChar[0]=='>' && empSalaryChar[1]=='=')
             {
+                struct retrieveMsgBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[6];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+2];
                 }
                 empSalary = atoi(empSalaryCharWithoutOperator);
-                printf("LARGER THAN OR EQUAL FOUNDED %d\n", empSalary);
+                strcpy(toRetrieveBuffer.name, empName);
+                toRetrieveBuffer.salaryOperation=biggerThanOrEqual;
+                toRetrieveBuffer.salary=empSalary;
+                if(strcmp(empName, "Any")==0)
+                {
+                    toRetrieveBuffer.operation=salaryOnly;
+                    //printf("SALARY ONLY\n");
+                }
+                else
+                {
+                    toRetrieveBuffer.operation=nameAndSalary;
+                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+                }
+                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                operationCounter++;
+                
+                
             }
             else if(empSalaryChar[0]=='<' && empSalaryChar[1]=='=')
             {
 
+                struct retrieveMsgBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[6];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+2];
                 }
                 empSalary = atoi(empSalaryCharWithoutOperator);
-                printf("SMALLER THAN OR EQUAL FOUNDED %d\n", empSalary);
+                strcpy(toRetrieveBuffer.name, empName);
+                toRetrieveBuffer.salaryOperation=smallerThanOrEqual;
+                toRetrieveBuffer.salary=empSalary;
+                if(strcmp(empName, "Any")==0)
+                {
+                    toRetrieveBuffer.operation=salaryOnly;
+                    //printf("SALARY ONLY\n");
+                }
+                else
+                {
+                    toRetrieveBuffer.operation=nameAndSalary;
+                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+                }
+                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                operationCounter++;
+                
+            }
+            else if(empSalaryChar="Any")
+            {
+                struct retrieveMsgBuffer toRetrieveBuffer;
+                toRetrieveBuffer.salaryOperation=none;
+                if(empName=="Any"){
+                    toRetrieveBuffer.operation=fullTable;
+                }
             }
 
         }

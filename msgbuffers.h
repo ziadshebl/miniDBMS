@@ -42,9 +42,9 @@ struct logMsgBuffer
 
 enum salaryRetrieveOperation {
    smallerThan,
-   biggherThan,
+   biggerThan,
    equal,
-   smallThanOrEqual,
+   smallerThanOrEqual,
    biggerThanOrEqual,
    none
 };

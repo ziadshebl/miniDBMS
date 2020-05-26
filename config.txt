@@ -3,7 +3,7 @@ noOfClients
 
 client1
 Add	Ahmed Mohamed	1000
-Retrieve	Name:	Any	Salary: <500
+Retrieve	Name:	Mohamed	Salary: <500
 Retrieve	Name:	Yasser	Salary: >500
 Retrieve	Name:	Any	Salary: =500
 Retrieve	Name:	Any	Salary: >=500
