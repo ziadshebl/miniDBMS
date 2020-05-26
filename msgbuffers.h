@@ -1,6 +1,6 @@
 #include "record.h"
 
-struct addRecordMsgBuffer
+struct addRecordBuffer
 {
    long mtype;
    int clientNumber;
@@ -13,7 +13,7 @@ enum modifySalaryOperation {
    decrease
 };
 
-struct modifyRecordMsgBuffer
+struct modifyRecordBuffer
 {
    long mtype;
    int recordKey;
@@ -21,13 +21,13 @@ struct modifyRecordMsgBuffer
    int value;
 };
 
-struct acquireRecordMsgBuffer
+struct acquireRecordBuffer
 {
    long mtype;
    int keyOfRecordToBeAcquired;
 };
 
-struct releaseRecordMsgBuffer
+struct releaseRecordBuffer
 {
    long mtype;
    int keyOfRecordToBeReleased;
@@ -59,7 +59,7 @@ enum retrieveOperation {
    fullTable
 };
 
-struct retrieveMsgBuffer
+struct retrieveBuffer
 {
    long mtype;
    char name[20];
@@ -68,11 +68,18 @@ struct retrieveMsgBuffer
    enum salaryRetrieveOperation salaryOperation;
 };
 
+enum operation{
+   add,
+   modify,
+   retrieve
+};
+
 struct AllOperations
 {
-   struct addRecordMsgBuffer  addMsgBuffer;
-   struct modifyRecordMsgBuffer  modifyBuffer;
-   struct retrieveMsgBuffer  retrieveBuffer;
+   enum operation operationNeeded;
+   struct addRecordBuffer  addBuffer;
+   struct modifyRecordBuffer  modifyBuffer;
+   struct retrieveBuffer  retrieveBuffer;
 };
 
 struct clientManagerMsgBuffer

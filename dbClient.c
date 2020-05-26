@@ -39,6 +39,7 @@ int main(int argc, char*argv[])
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
+    printf("dbID: %d\n", dbManagerPID);
     
 
     startingLineNumber = searchForAWord(clientStart);
@@ -56,7 +57,7 @@ int main(int argc, char*argv[])
         int empId;
         if(sscanf(textBuffer,"Add  %s   %s",empName, empSalaryChar)!=0)
         {
-            struct addRecordMsgBuffer toAddBuffer;
+            struct addRecordBuffer toAddBuffer;
             empSalary=atoi(empSalaryChar);
             
             strcpy(toAddBuffer.name,empName);
@@ -64,7 +65,8 @@ int main(int argc, char*argv[])
             toAddBuffer.clientNumber=clientNumber;
             toAddBuffer.mtype=dbManagerPID;
             
-            clientOperations[operationCounter].addMsgBuffer=toAddBuffer;
+            clientOperations[operationCounter].addBuffer=toAddBuffer;
+            clientOperations[operationCounter].operationNeeded = add;
             operationCounter++;
 
             printf("EmpName: %s with %d will be added from client %d\n", empName, empSalary, clientNumber);
@@ -74,7 +76,7 @@ int main(int argc, char*argv[])
         {
             if(salaryIncreaseOrDecrease=='+')
             {
-                struct modifyRecordMsgBuffer toModifyBuffer;
+                struct modifyRecordBuffer toModifyBuffer;
                 empSalary=atoi(empSalaryChar);
                 empId=atoi(empIdChar);
 
@@ -88,7 +90,7 @@ int main(int argc, char*argv[])
             }
             else 
             {
-                struct modifyRecordMsgBuffer toModifyBuffer;
+                struct modifyRecordBuffer toModifyBuffer;
                 empSalary=atoi(empSalaryChar);
                 empId=atoi(empIdChar);
 
@@ -106,7 +108,7 @@ int main(int argc, char*argv[])
         {
             if(empSalaryChar[0]=='<' && empSalaryChar[1]!='=')
             {
-                struct retrieveMsgBuffer toRetrieveBuffer;
+                struct retrieveBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[7];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
@@ -131,7 +133,7 @@ int main(int argc, char*argv[])
             }
             else if(empSalaryChar[0]=='>' && empSalaryChar[1]!='=')
             {
-                struct retrieveMsgBuffer toRetrieveBuffer;
+                struct retrieveBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[7];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
@@ -156,7 +158,7 @@ int main(int argc, char*argv[])
             }
             else if(empSalaryChar[0]=='=')
             {
-                struct retrieveMsgBuffer toRetrieveBuffer;
+                struct retrieveBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[7];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
@@ -182,7 +184,7 @@ int main(int argc, char*argv[])
             }
             else if(empSalaryChar[0]=='>' && empSalaryChar[1]=='=')
             {
-                struct retrieveMsgBuffer toRetrieveBuffer;
+                struct retrieveBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[6];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+2];
@@ -209,7 +211,7 @@ int main(int argc, char*argv[])
             else if(empSalaryChar[0]=='<' && empSalaryChar[1]=='=')
             {
 
-                struct retrieveMsgBuffer toRetrieveBuffer;
+                struct retrieveBuffer toRetrieveBuffer;
                 char empSalaryCharWithoutOperator[6];
                 for (int character=0; character<7; character++){
                     empSalaryCharWithoutOperator[character]=empSalaryChar[character+2];
@@ -234,7 +236,7 @@ int main(int argc, char*argv[])
             }
             else if(strcmp(empName, "Any")==0)
             {
-                struct retrieveMsgBuffer toRetrieveBuffer;
+                struct retrieveBuffer toRetrieveBuffer;
                 toRetrieveBuffer.salaryOperation=none;
                 if(empName=="Any")
                 {
@@ -270,7 +272,7 @@ int main(int argc, char*argv[])
         }
         
     }
-    //printf("Name: %s    Salary:  %d     Client: %d\n",clientOperations[0].addMsgBuffer.name, clientOperations[0].addMsgBuffer.salary, clientOperations[0].addMsgBuffer.clientNumber);
+    //printf("Name: %s    Salary:  %d     Client: %d\n",clientOperations[0].addBuffer.name, clientOperations[0].addBuffer.salary, clientOperations[0].addBuffer.clientNumber);
 
 
 
