@@ -39,7 +39,7 @@ int main(int argc, char*argv[])
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
-    printf("dbID: %d\n", dbManagerPID);
+    //printf("dbID: %d\n", dbManagerPID);
     
 
     startingLineNumber = searchForAWord(clientStart);
@@ -48,7 +48,7 @@ int main(int argc, char*argv[])
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
-        printf("Client%s: %s",clientNumberChar,textBuffer);
+        //printf("Client%s: %s",clientNumberChar,textBuffer);
         char empName[15];
         char empSalaryChar[8];
         char empIdChar[6];
@@ -62,14 +62,14 @@ int main(int argc, char*argv[])
             
             strcpy(toAddBuffer.name,empName);
             toAddBuffer.salary=empSalary;
-            toAddBuffer.clientNumber=clientNumber;
+            toAddBuffer.clientPID=getpid();
             toAddBuffer.mtype=dbManagerPID;
             
             clientOperations[operationCounter].addBuffer=toAddBuffer;
             clientOperations[operationCounter].operationNeeded = add;
             operationCounter++;
 
-            printf("EmpName: %s with %d will be added from client %d\n", empName, empSalary, clientNumber);
+            //printf("EmpName: %s with %d will be added from client %d\n", empName, empSalary, clientNumber);
 
         }
         else if(sscanf(textBuffer,"Modify  %s  %c%s",empIdChar,&salaryIncreaseOrDecrease ,empSalaryChar)!=0)
@@ -86,7 +86,7 @@ int main(int argc, char*argv[])
 
                  clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
                  operationCounter++;
-                printf("Employe %s will be increased by %d\n", empIdChar, empSalary);
+                //printf("Employe %s will be increased by %d\n", empIdChar, empSalary);
             }
             else 
             {
@@ -100,7 +100,7 @@ int main(int argc, char*argv[])
 
                 clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
                 operationCounter++;
-                printf("Employe %s will be decreased by %d\n", empIdChar, empSalary);
+                //printf("Employe %s will be decreased by %d\n", empIdChar, empSalary);
             }
 
         }
@@ -145,12 +145,12 @@ int main(int argc, char*argv[])
                 if(strcmp(empName, "Any")==0)
                 {
                     toRetrieveBuffer.operation=salaryOnly;
-                    printf("SALARY ONLY\n");
+                    //printf("SALARY ONLY\n");
                 }
                 else
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
-                    printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
                 clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
@@ -248,7 +248,7 @@ int main(int argc, char*argv[])
         else if(sscanf(textBuffer,"Retrieve NameStarts:   %s  Salary: %s",empName, empSalaryChar)!=0)
         {
             
-            printf("Employee starting with %s with salary %s will be retrieved\n", empName, empSalaryChar);
+           // printf("Employee starting with %s with salary %s will be retrieved\n", empName, empSalaryChar);
 
         }
     }
@@ -267,8 +267,8 @@ int main(int argc, char*argv[])
         }
         else
         {
-            printf("MESSAGE SENT SUCCESSFULLY\n");
-            printf("The dbmanager id is: %d \n",dbManagerPID);
+            //printf("MESSAGE SENT SUCCESSFULLY\n");
+           // printf("The dbmanager id is: %d \n",dbManagerPID);
         }
         
     }

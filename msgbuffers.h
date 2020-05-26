@@ -3,7 +3,7 @@
 struct addRecordBuffer
 {
    long mtype;
-   int clientNumber;
+   int clientPID;
    char name[20];
    int salary;
 };
@@ -86,4 +86,10 @@ struct clientManagerMsgBuffer
 {
    long mtype;
    struct AllOperations operationMessage;
+};
+
+struct additionSuccessMessageBuffer
+{
+   long mtype;
+   int key;
 };

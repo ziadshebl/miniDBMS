@@ -7,9 +7,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <limits.h>
 #include "msgbuffers.h"
 //#include "record.h"
-
 
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024
@@ -23,7 +23,8 @@ void readFromALine(int lineNeeded, char*characterFound);
 
 //MAIN Function.
 int main(){
-
+    char cwd[100];    
+    getcwd(cwd, sizeof(cwd));
     char numberOfClientsCharacter[maxNumberOfCharToBeRead];
     char databaseSharedMemoryChar[10];
     char clientManagerMsgQidChar[10];
@@ -35,13 +36,13 @@ int main(){
     int clientManagerMsgQid;// The id for the buffer between client and the database manager
     int databaseSharedMemory;
     int dbManagerPID;
-
-
+        //ftok to generate unique key 
+    key_t key = ftok(cwd,65); 
     clientManagerMsgQid = msgget(IPC_PRIVATE, 0644); // Initiallizing the buffer between client and the database manager
     printf("The Message Buffer Id is:%d \n",clientManagerMsgQid);
+    printf("the key is: %d",key);
 
-
-    databaseSharedMemory = shmget(IPC_PRIVATE,sizeOfMessageBuffer,0666|IPC_CREAT); // shmget returns an identifier in shmid 
+    databaseSharedMemory = shmget(key,1024,0666|IPC_CREAT); // shmget returns an identifier in shmid 
     printf("The Shared memory Id is: %d \n",databaseSharedMemory);
 
     //Reading the number of clients from the configuration file
