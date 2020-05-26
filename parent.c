@@ -58,6 +58,10 @@ int main(){
         if(pid!=0 || child==0)
         {
             pid=fork(); 
+            if(child==2)
+            {
+                dbManagerPID = pid;
+            }
             if(child>2)
             {
                  numberOfClients=numberOfClients-1;
@@ -73,7 +77,7 @@ int main(){
             }
             else if(child == 2 && pid==0)
             {
-                dbManagerPID = pid;
+
                 sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
                 sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
                 char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,0};
@@ -94,7 +98,7 @@ int main(){
     }
 
 
-     for (int childNumber=0; childNumber<5; childNumber++){
+     for (int childNumber=0; childNumber<totalNumberOfChildren; childNumber++){
             int stat_loc;
             pid = wait(&stat_loc);
             //if(!(stat_loc & 0x00FF))

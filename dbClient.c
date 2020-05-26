@@ -266,6 +266,7 @@ int main(int argc, char*argv[])
         else
         {
             printf("MESSAGE SENT SUCCESSFULLY\n");
+            printf("The dbmanager id is: %d \n",dbManagerPID);
         }
         
     }

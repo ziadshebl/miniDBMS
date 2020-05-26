@@ -11,28 +11,30 @@
 #include "msgbuffers.h"
 
 
-struct clientManagerMsgBuffer message;
+
 //MAIN Function.
 int main(int argc, char*argv[]){
-     
+     struct clientManagerMsgBuffer message;
     //Getting the message q id and the shared memory id.
     int sharedMemoryId = atoi(argv[1]);
     int ManagerClientMessageQid = atoi(argv[2]);
-    printf("I am the dbManager\n");
-    printf("The shared memory id is: %d \n",sharedMemoryId);
-    printf("The message Q id is: %d \n",ManagerClientMessageQid);
+    int messageRecieveStatus;
+    // printf("I am the dbManager\n");
+    // printf("The shared memory id is: %d \n",sharedMemoryId);
+    // printf("The message Q id is: %d \n",ManagerClientMessageQid);
+    // printf("I am the dbManager and my id is: %d\n",getpid());
     while(1)
     {
-
+        messageRecieveStatus=msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), IPC_NOWAIT);
+        if(messageRecieveStatus>-1)
+        {
+            printf("The Name is %s \n",message.operationMessage.addMsgBuffer.name);
+        }
     }
     
+
     
 
-}
-void Recieve()
-{
-    while(msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), !IPC_NOWAIT)!=-1)
-    {
-    }
+
     
 }
