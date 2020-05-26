@@ -3,6 +3,7 @@
 struct addRecordMsgBuffer
 {
    long mtype;
+   int clientNumber;
    char name[20];
    int salary;
 };
