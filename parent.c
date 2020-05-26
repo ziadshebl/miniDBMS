@@ -9,8 +9,10 @@
 #include <sys/wait.h>
 #include "msgbuffers.h"
 
+
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024
+#define sizeOfMessageBuffer 28000 
 
 
 int searchForAWord(char*wordToBeSearched);
@@ -22,11 +24,22 @@ void readFromALine(int lineNeeded, char*characterFound);
 int main(){
 
     char numberOfClientsCharacter[maxNumberOfCharToBeRead];
+    char databaseSharedMemoryChar[10];
+    char clientManagerMsgQidChar[10];
     int numberOfClients;
     int lineNumber;
     int totalNumberOfChildren;
     int pid;
+    int clientManagerMsgQid;// The id for the buffer between client and the database manager
+    int databaseSharedMemory;
 
+
+    clientManagerMsgQid = msgget(IPC_PRIVATE, 0644); // Initiallizing the buffer between client and the database manager
+    printf("The Message Buffer Id is:%d \n",clientManagerMsgQid);
+
+
+    databaseSharedMemory = shmget(IPC_PRIVATE,sizeOfMessageBuffer,0666|IPC_CREAT); // shmget returns an identifier in shmid 
+    printf("The Shared memory Id is: %d \n",databaseSharedMemory);
 
     //Reading the number of clients from the configuration file
     lineNumber = searchForAWord("noOfClients");
@@ -57,15 +70,18 @@ int main(){
             }
             else if(child == 2 && pid==0)
             {
-                char *argv[] = {"dbManager.o", NULL};
+                sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
+                sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
+                char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,0};
                 execve(argv[0], &argv[0], NULL);
             }
             else if(pid==0)
             {
-            
+                sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
+                sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
                 char clientNumber[2];
                 sprintf(clientNumber, "%d", numberOfClients+1);
-                char *argv[] = {"dbClient.o",clientNumber, 0};
+                char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar, 0};
                 execve(argv[0], &argv[0], NULL);
                 
             }
