@@ -3,6 +3,7 @@
 struct addRecordMsgBuffer
 {
    long mtype;
+   int clientNumber;
    char name[20];
    int salary;
 };
@@ -67,9 +68,9 @@ struct retrieveMsgBuffer
    enum salaryRetrieveOperation salaryOperation;
 };
 
-struct AllOperationsPointers
+struct AllOperations
 {
-   struct addRecordMsgBuffer * addMsgBuffer;
-   struct modifyRecordMsgBuffer * modifyBuffer;
-   struct queryMsgBuffer * queryBuffer;
+   struct addRecordMsgBuffer  addMsgBuffer;
+   struct modifyRecordMsgBuffer  modifyBuffer;
+   struct retrieveMsgBuffer  retrieveBuffer;
 };

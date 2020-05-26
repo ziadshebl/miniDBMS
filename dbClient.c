@@ -24,18 +24,21 @@ void readFromALine(int lineNeeded, char*characterFound);
 //MAIN Function.
 int main(int argc, char*argv[])
 {
-    //int clientNumber = atoi(argv[1]);
+    int clientNumber = atoi(argv[1]);
+    int clientManagerMsgQ = atoi(argv[3]);
+    int databaseSharedMemory = atoi (argv[2]);
     char clientStart[8]="client";
     char clientEnd[11]="endClient";
-    char clientNumber[2];
+    char clientNumberChar[2];
     int startingLineNumber;
     int endingLineNumber;
     char textBuffer[maxNumberOfCharToBeRead];
-    struct AllOperationsPointers clientOperations[maxOperationsNumber];
+    struct AllOperations clientOperations[maxOperationsNumber];
     int operationCounter=0;
-    strcpy(clientNumber,argv[1]);
-    strcat(clientStart,clientNumber);
-    strcat(clientEnd,clientNumber);
+    strcpy(clientNumberChar,argv[1]);
+    strcat(clientStart,clientNumberChar);
+    strcat(clientEnd,clientNumberChar);
+    
 
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
@@ -43,14 +46,14 @@ int main(int argc, char*argv[])
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
-        printf("Client%s: %s",clientNumber,textBuffer);
+        printf("Client%s: %s",clientNumberChar,textBuffer);
         char empName[15];
         char empSalaryChar[8];
         char empIdChar[6];
         char salaryIncreaseOrDecrease;
         int empSalary;
         int empId;
-        if(sscanf(textBuffer,"Add  %s  %s",empName, empSalaryChar)!=0)
+        if(sscanf(textBuffer,"Add  %s   %s",empName, empSalaryChar)!=0)
         {
             struct addRecordMsgBuffer toAddBuffer;
             empSalary=atoi(empSalaryChar);
@@ -58,10 +61,10 @@ int main(int argc, char*argv[])
             strcpy(toAddBuffer.name,empName);
             toAddBuffer.salary=empSalary;
             
-            clientOperations[operationCounter].addMsgBuffer=&toAddBuffer;
+            clientOperations[operationCounter].addMsgBuffer=toAddBuffer;
             operationCounter++;
 
-            printf("EmpName: %s with %d\n", empName, empSalary);
+            printf("EmpName: %s with %d will be added from client %d\n", empName, empSalary, clientNumber);
 
         }
         else if(sscanf(textBuffer,"Modify  %s  %c%s",empIdChar,&salaryIncreaseOrDecrease ,empSalaryChar)!=0)
@@ -76,7 +79,7 @@ int main(int argc, char*argv[])
                 toModifyBuffer.salaryOperation=increase;
                 toModifyBuffer.value=empSalary;
 
-                 clientOperations[operationCounter].modifyBuffer=&toModifyBuffer;
+                 clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
                  operationCounter++;
                 printf("Employe %s will be increased by %d\n", empIdChar, empSalary);
             }
@@ -90,7 +93,7 @@ int main(int argc, char*argv[])
                 toModifyBuffer.salaryOperation=decrease;
                 toModifyBuffer.value=empSalary;
 
-                clientOperations[operationCounter].modifyBuffer=&toModifyBuffer;
+                clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
                 operationCounter++;
                 printf("Employe %s will be decreased by %d\n", empIdChar, empSalary);
             }
@@ -118,7 +121,7 @@ int main(int argc, char*argv[])
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
                 }
-                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
                 
                
@@ -144,7 +147,7 @@ int main(int argc, char*argv[])
                     toRetrieveBuffer.operation=nameAndSalary;
                     printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
-                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
                 
             }
@@ -169,7 +172,7 @@ int main(int argc, char*argv[])
                     toRetrieveBuffer.operation=nameAndSalary;
                     //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
-                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
                 
                 
@@ -195,7 +198,7 @@ int main(int argc, char*argv[])
                     toRetrieveBuffer.operation=nameAndSalary;
                     //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
-                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
                 
                 
@@ -222,15 +225,16 @@ int main(int argc, char*argv[])
                     toRetrieveBuffer.operation=nameAndSalary;
                     //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
-                clientOperations[operationCounter].modifyBuffer=&toRetrieveBuffer;
+                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
                 
             }
-            else if(empSalaryChar="Any")
+            else if(strcmp(empName, "Any")==0)
             {
                 struct retrieveMsgBuffer toRetrieveBuffer;
                 toRetrieveBuffer.salaryOperation=none;
-                if(empName=="Any"){
+                if(empName=="Any")
+                {
                     toRetrieveBuffer.operation=fullTable;
                 }
             }
@@ -243,6 +247,12 @@ int main(int argc, char*argv[])
 
         }
     }
+
+
+    //printf("Name: %s    Salar:  %s"clientOperations[0].addMsgBuffer.name, clientOperations[0].addMsgBuffer.salary, clientOperations[0].addMsgBuffer.clientNumber)
+
+
+
 
 
 }

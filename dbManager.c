@@ -15,10 +15,12 @@
 //MAIN Function.
 int main(int argc, char*argv[]){
 
-
+    int sharedMemoryId = atoi(argv[1]);
+    int ManagerClientMessageQid = atoi(argv[2]);
     printf("%d\n", argc);
     printf("%s\n",argv[1]); 
-    
+    printf("The shared memory id is: %d \n",sharedMemoryId);
+    printf("The message Q id id is: %d \n",ManagerClientMessageQid);
     
     printf("I am the dbManager\n");
 
