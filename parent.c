@@ -42,6 +42,10 @@ int main(){
         if(pid!=0 || child==0)
         {
             pid=fork(); 
+            if(child>2)
+            {
+                 numberOfClients=numberOfClients-1;
+            }
             if(child==0 && pid==0){
                 char *argv[] = {"logger.o", 0};
                 execve(argv[0], &argv[0], NULL);
@@ -58,18 +62,22 @@ int main(){
             }
             else if(pid==0)
             {
-               char *argv[] = {"dbClient.o", 0};
+            
+                char clientNumber[2];
+                sprintf(clientNumber, "%d", numberOfClients+1);
+                char *argv[] = {"dbClient.o",clientNumber, 0};
                 execve(argv[0], &argv[0], NULL);
+                
             }
         }
     }
 
 
-     for (int childNumber=0; childNumber<5; i++){
+     for (int childNumber=0; childNumber<5; childNumber++){
             int stat_loc;
             pid = wait(&stat_loc);
-            if(!(stat_loc & 0x00FF))
-  	        printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
+            //if(!(stat_loc & 0x00FF))
+  	       // printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
 
       }
 
