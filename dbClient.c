@@ -240,12 +240,14 @@ int main(int argc, char*argv[])
         struct additionSuccessMessageBuffer additionSuccessMessage;
         if(toSendMessage.operationMessage.operationNeeded==add)
         {
+            
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
             int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
-            //printf("The key of the added record is %d", additionSuccessMessage.key);
+            printf("The key of the added record is %d\n", additionSuccessMessage.key);
         }
         else if(toSendMessage.operationMessage.operationNeeded==modify)
         {
+            printf("MODIFY\n");
             struct acquireRecordBuffer toAqcuireRecord;
             struct clientManagerMsgBuffer toAcquireMessage;
             struct operationSuccessMessageBuffer operationSuccessMessage;
@@ -257,16 +259,16 @@ int main(int argc, char*argv[])
             send_val = msgsnd(clientManagerMsgQ, &toAcquireMessage, sizeof(toAcquireMessage.operationMessage), !IPC_NOWAIT);
             if(send_val > -1){
                 printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-                int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
-                if(operationSuccessMessage.isOperationDone == 1)
+                //int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
+                //if(operationSuccessMessage.isOperationDone == 1)
                 { 
                     printf("Message for acquire success sent\n");
                     send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
                     if(send_val>-1)
                     {
                         printf("Message to modify %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-                        messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
-                        if(operationSuccessMessage.isOperationDone==1)
+                        //messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
+                        //if(operationSuccessMessage.isOperationDone==1)
                         {
                             printf("Message for modification success\n");
                         }
