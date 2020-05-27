@@ -241,7 +241,7 @@ int main(int argc, char*argv[])
         if(toSendMessage.operationMessage.operationNeeded==add)
         {
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
-            int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), IPC_NOWAIT);
+            int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
             //printf("The key of the added record is %d", additionSuccessMessage.key);
         }
         else if(toSendMessage.operationMessage.operationNeeded==modify)
@@ -250,13 +250,14 @@ int main(int argc, char*argv[])
             struct clientManagerMsgBuffer toAcquireMessage;
             struct operationSuccessMessageBuffer operationSuccessMessage;
             toAqcuireRecord.keyOfRecordToBeAcquired = toSendMessage.operationMessage.modifyBuffer.recordKey;
+            toAqcuireRecord.clientPID=getpid();
             toAcquireMessage.operationMessage.acquireBuffer=toAqcuireRecord;
             toAcquireMessage.mtype=dbManagerPID;
             toAcquireMessage.operationMessage.operationNeeded=acquire;
             send_val = msgsnd(clientManagerMsgQ, &toAcquireMessage, sizeof(toAcquireMessage.operationMessage), !IPC_NOWAIT);
             if(send_val > -1){
                 printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-                int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), IPC_NOWAIT);
+                int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
                 if(operationSuccessMessage.isOperationDone == 1)
                 { 
                     printf("Message for acquire success sent\n");
@@ -264,8 +265,8 @@ int main(int argc, char*argv[])
                     if(send_val>-1)
                     {
                         printf("Message to modify %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-                        messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), IPC_NOWAIT);
-                        if(operationSuccessMessage.isOperationDone>-1)
+                        messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
+                        if(operationSuccessMessage.isOperationDone==1)
                         {
                             printf("Message for modification success\n");
                         }
@@ -367,6 +368,7 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
     toModifyBuffer.recordKey=empId;
     toModifyBuffer.salaryOperation=salaryOperation;
     toModifyBuffer.value=empSalary;
+    toModifyBuffer.clientPID=getpid();
     return toModifyBuffer;
 }
 

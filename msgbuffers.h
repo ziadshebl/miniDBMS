@@ -15,6 +15,7 @@ enum modifySalaryOperation {
 
 struct modifyRecordBuffer
 {
+   int clientPID;
    int recordKey;
    enum modifySalaryOperation salaryOperation;
    int value;
@@ -22,11 +23,13 @@ struct modifyRecordBuffer
 
 struct acquireRecordBuffer
 {
+   int clientPID;
    int keyOfRecordToBeAcquired;
 };
 
 struct releaseRecordBuffer
 {
+   int clientPID;
    int keyOfRecordToBeReleased;
 };
 
