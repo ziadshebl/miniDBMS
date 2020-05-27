@@ -71,10 +71,8 @@ int main(int argc, char*argv[])
             struct modifyRecordBuffer toModifyBuffer;
             if(salaryIncreaseOrDecrease=='+')
             {
-                
                  toModifyBuffer = createModifyRecordBuffer (empSalaryChar, empName, empIdChar,increase);
                  
-
             }
             else 
             {
@@ -254,6 +252,7 @@ int main(int argc, char*argv[])
             toAqcuireRecord.keyOfRecordToBeAcquired = toSendMessage.operationMessage.modifyBuffer.recordKey;
             toAcquireMessage.operationMessage.acquireBuffer=toAqcuireRecord;
             toAcquireMessage.mtype=dbManagerPID;
+            toAcquireMessage.operationMessage.operationNeeded=acquire;
             send_val = msgsnd(clientManagerMsgQ, &toAcquireMessage, sizeof(toAcquireMessage.operationMessage), !IPC_NOWAIT);
             if(send_val > -1){
                 printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
