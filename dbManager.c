@@ -26,6 +26,7 @@ int messageRecieveStatus;//A variable to check if a message is recieved or not.
 int messageSentStatus;
 
 void addNewRecord();
+void acquireRecord();
 
 //MAIN Function.
 int main(int argc, char*argv[])
@@ -44,9 +45,9 @@ int main(int argc, char*argv[])
             {
                 addNewRecord();//Adds a new record from the last message sent to the shared memory.
             }
-            else if(message.operationMessage.operationNeeded==modify)
+            else if(message.operationMessage.operationNeeded==acquire)
             {
-                printf("A modify message rcvd \n");
+                acquireRecord();//Aquire a record from the last message sent to the shared memory.
             }
             else if(message.operationMessage.operationNeeded==retrieve)
             {
@@ -64,10 +65,10 @@ void addNewRecord()
     tuple->salary=message.operationMessage.addBuffer.salary;
     strcpy(tuple->name,message.operationMessage.addBuffer.name);
 
-    printf("The key is: %d \n",tuple->key);
-    printf("The salary is: %d \n",tuple->salary);
-    printf("The name is: %s \n",tuple->name);
-    printf("Added..... \n");
+    // printf("The key is: %d \n",tuple->key);
+    // printf("The salary is: %d \n",tuple->salary);
+    // printf("The name is: %s \n",tuple->name);
+    // printf("Added..... \n");
 
     
 
@@ -77,7 +78,7 @@ void addNewRecord()
 
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onAdditionSuccess, sizeof(onAdditionSuccess.key), !IPC_NOWAIT);//Sending a message to the dbmanager with the key of the tuple added.
     if(messageSentStatus>-1){
-        printf("Message sent successfully... \n");
+        //printf("Message sent successfully... \n");
     }
     else{
         printf("Error in sending... \n");
@@ -88,5 +89,9 @@ void addNewRecord()
         key++; // to be handled 
         tuple+=sizeof(struct record);//Incrementing the pointer pointing to the shared memory by the size of the struct added.
     }
+}
+void acquireRecord()
+{
+    printf("An acquire request is recieved... \n");
 }
 
