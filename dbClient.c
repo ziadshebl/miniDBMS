@@ -247,7 +247,6 @@ int main(int argc, char*argv[])
         }
         else if(toSendMessage.operationMessage.operationNeeded==modify)
         {
-            printf("MODIFY\n");
             struct acquireRecordBuffer toAqcuireRecord;
             struct clientManagerMsgBuffer toAcquireMessage;
             struct operationSuccessMessageBuffer operationSuccessMessage;
