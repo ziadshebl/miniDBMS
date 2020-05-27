@@ -1,8 +1,8 @@
 #include "record.h"
+#define maxCharactersOfLogMessage   100
 
 struct addRecordBuffer
 {
-   long mtype;
    int clientPID;
    char name[20];
    int salary;
@@ -15,7 +15,6 @@ enum modifySalaryOperation {
 
 struct modifyRecordBuffer
 {
-   long mtype;
    int recordKey;
    enum modifySalaryOperation salaryOperation;
    int value;
@@ -23,22 +22,19 @@ struct modifyRecordBuffer
 
 struct acquireRecordBuffer
 {
-   long mtype;
    int keyOfRecordToBeAcquired;
 };
 
 struct releaseRecordBuffer
 {
-   long mtype;
    int keyOfRecordToBeReleased;
 };
 
 struct logMsgBuffer
 {
    long mtype;
-   int keyOfRecordToBeReleased;
+   char messageToLog[maxCharactersOfLogMessage];
 };
-
 
 
 enum salaryRetrieveOperation {
@@ -71,7 +67,9 @@ struct retrieveBuffer
 enum operation{
    add,
    modify,
-   retrieve
+   retrieve,
+   acquire,
+   release
 };
 
 struct AllOperations
@@ -80,6 +78,9 @@ struct AllOperations
    struct addRecordBuffer  addBuffer;
    struct modifyRecordBuffer  modifyBuffer;
    struct retrieveBuffer  retrieveBuffer;
+   struct acquireRecordBuffer acquireBuffer;
+   struct releaseRecordBuffer releaseBuffer;
+   
 };
 
 struct clientManagerMsgBuffer

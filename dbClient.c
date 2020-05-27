@@ -14,14 +14,18 @@
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024
 #define maxOperationsNumber 100
+#define maxSalaryDigits 6
+#define maxNameCharacters 20
+#define maxIdDigits 6
+
 
 
 int searchForAWord(char*wordToBeSearched);
 void readFromALine(int lineNeeded, char*characterFound);
+struct addRecordBuffer createAddRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters]);
+struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits],enum modifySalaryOperation salaryOperation);
 
 
-
-//MAIN Function.
 int main(int argc, char*argv[])
 {
     int clientNumber = atoi(argv[1]);
@@ -39,70 +43,47 @@ int main(int argc, char*argv[])
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
-    //printf("dbID: %d\n", dbManagerPID);
-    
+
 
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
 
+
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
-        //printf("Client%s: %s",clientNumberChar,textBuffer);
-        char empName[15];
-        char empSalaryChar[8];
-        char empIdChar[6];
+        char empName[maxNameCharacters];
+        char empSalaryChar[maxSalaryDigits];
+        char empIdChar[maxIdDigits];
         char salaryIncreaseOrDecrease;
         int empSalary;
         int empId;
         if(sscanf(textBuffer,"Add  %s   %s",empName, empSalaryChar)!=0)
         {
-            struct addRecordBuffer toAddBuffer;
-            empSalary=atoi(empSalaryChar);
-            
-            strcpy(toAddBuffer.name,empName);
-            toAddBuffer.salary=empSalary;
-            toAddBuffer.clientPID=getpid();
-            toAddBuffer.mtype=dbManagerPID;
-            
+            struct addRecordBuffer toAddBuffer = createAddRecordBuffer (empSalaryChar, empName);
             clientOperations[operationCounter].addBuffer=toAddBuffer;
             clientOperations[operationCounter].operationNeeded = add;
             operationCounter++;
 
-            //printf("EmpName: %s with %d will be added from client %d\n", empName, empSalary, clientNumber);
-
         }
         else if(sscanf(textBuffer,"Modify  %s  %c%s",empIdChar,&salaryIncreaseOrDecrease ,empSalaryChar)!=0)
         {
+            struct modifyRecordBuffer toModifyBuffer;
             if(salaryIncreaseOrDecrease=='+')
             {
-                struct modifyRecordBuffer toModifyBuffer;
-                empSalary=atoi(empSalaryChar);
-                empId=atoi(empIdChar);
+                
+                 toModifyBuffer = createModifyRecordBuffer (empSalaryChar, empName, empIdChar,increase);
+                 
 
-                toModifyBuffer.recordKey=empId;
-                toModifyBuffer.salaryOperation=increase;
-                toModifyBuffer.value=empSalary;
-
-                 clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
-                 operationCounter++;
-                //printf("Employe %s will be increased by %d\n", empIdChar, empSalary);
             }
             else 
             {
-                struct modifyRecordBuffer toModifyBuffer;
-                empSalary=atoi(empSalaryChar);
-                empId=atoi(empIdChar);
-
-                toModifyBuffer.recordKey=empId;
-                toModifyBuffer.salaryOperation=decrease;
-                toModifyBuffer.value=empSalary;
-
-                clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
-                operationCounter++;
-                //printf("Employe %s will be decreased by %d\n", empIdChar, empSalary);
+                 toModifyBuffer = createModifyRecordBuffer (empSalaryChar, empName, empIdChar,decrease);
+                
             }
-
+            clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
+            clientOperations[operationCounter].operationNeeded = modify;
+            operationCounter++;
         }
         else if(sscanf(textBuffer,"Retrieve Name:   %s  Salary: %s",empName, empSalaryChar)!=0)
         {
@@ -145,12 +126,10 @@ int main(int argc, char*argv[])
                 if(strcmp(empName, "Any")==0)
                 {
                     toRetrieveBuffer.operation=salaryOnly;
-                    //printf("SALARY ONLY\n");
                 }
                 else
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
-                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
                 }
                 clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
@@ -170,12 +149,12 @@ int main(int argc, char*argv[])
                 if(strcmp(empName, "Any")==0)
                 {
                     toRetrieveBuffer.operation=salaryOnly;
-                    //printf("SALARY ONLY\n");
+                   
                 }
                 else
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
-                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+               
                 }
                 clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
@@ -196,12 +175,12 @@ int main(int argc, char*argv[])
                 if(strcmp(empName, "Any")==0)
                 {
                     toRetrieveBuffer.operation=salaryOnly;
-                    //printf("SALARY ONLY\n");
+                    
                 }
                 else
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
-                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+     
                 }
                 clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
@@ -223,12 +202,12 @@ int main(int argc, char*argv[])
                 if(strcmp(empName, "Any")==0)
                 {
                     toRetrieveBuffer.operation=salaryOnly;
-                    //printf("SALARY ONLY\n");
+                    
                 }
                 else
                 {
                     toRetrieveBuffer.operation=nameAndSalary;
-                    //printf("SALARY AND NAME=%s\n", toRetrieveBuffer.name);
+                  
                 }
                 clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
                 operationCounter++;
@@ -248,7 +227,7 @@ int main(int argc, char*argv[])
         else if(sscanf(textBuffer,"Retrieve NameStarts:   %s  Salary: %s",empName, empSalaryChar)!=0)
         {
             
-           // printf("Employee starting with %s with salary %s will be retrieved\n", empName, empSalaryChar);
+     
 
         }
     }
@@ -256,26 +235,30 @@ int main(int argc, char*argv[])
 
     for (int operation; operation< operationCounter; operation++)
     {
-        struct clientManagerMsgBuffer toSend;
+        struct clientManagerMsgBuffer toSendMessage;
         int send_val;
-        toSend.mtype = dbManagerPID;
-        toSend.operationMessage=clientOperations[operation];
-        send_val = msgsnd(clientManagerMsgQ, &toSend, sizeof(toSend.operationMessage), !IPC_NOWAIT);
-        if(send_val < 0)
+        toSendMessage.mtype = dbManagerPID;
+        toSendMessage.operationMessage=clientOperations[operation];
+        if(toSendMessage.operationMessage.operationNeeded==add)
         {
-
+            send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
         }
-        else
+        else if(toSendMessage.operationMessage.operationNeeded==modify)
         {
-            //printf("MESSAGE SENT SUCCESSFULLY\n");
-           // printf("The dbmanager id is: %d \n",dbManagerPID);
+            struct acquireRecordBuffer toAqcuireRecord;
+            struct clientManagerMsgBuffer toAcquireMessage;
+            toAqcuireRecord.keyOfRecordToBeAcquired = toSendMessage.operationMessage.modifyBuffer.recordKey;
+            toAcquireMessage.operationMessage.acquireBuffer=toAqcuireRecord;
+            toAcquireMessage.mtype=dbManagerPID;
+            send_val = msgsnd(clientManagerMsgQ, &toAcquireMessage, sizeof(toAcquireMessage.operationMessage), !IPC_NOWAIT);
+            if(send_val > -1){
+                send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
+            }
+            
         }
         
     }
-    //printf("Name: %s    Salary:  %d     Client: %d\n",clientOperations[0].addBuffer.name, clientOperations[0].addBuffer.salary, clientOperations[0].addBuffer.clientNumber);
-
-
-
+    
 
 
 }
@@ -341,3 +324,31 @@ void readFromALine(int lineNeeded, char*characterFound)
     }
 
 }
+
+
+struct addRecordBuffer createAddRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters])
+{
+    struct addRecordBuffer toAddBuffer;
+    int empSalary=atoi(empSalaryChar);      
+    strcpy(toAddBuffer.name,empName);
+    toAddBuffer.salary=empSalary;
+    toAddBuffer.clientPID=getpid();
+
+    return toAddBuffer;
+
+}
+
+
+struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits],enum modifySalaryOperation salaryOperation)
+{
+    struct modifyRecordBuffer toModifyBuffer;
+    int empSalary=atoi(empSalaryChar);
+    int empId=atoi(empIdChar);
+
+
+    toModifyBuffer.recordKey=empId;
+    toModifyBuffer.salaryOperation=salaryOperation;
+    toModifyBuffer.value=empSalary;
+    return toModifyBuffer;
+}
+
