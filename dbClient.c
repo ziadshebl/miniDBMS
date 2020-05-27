@@ -239,9 +239,12 @@ int main(int argc, char*argv[])
         int send_val;
         toSendMessage.mtype = dbManagerPID;
         toSendMessage.operationMessage=clientOperations[operation];
+        struct additionSuccessMessageBuffer receivedMessage;
         if(toSendMessage.operationMessage.operationNeeded==add)
         {
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
+            int messageRecieveStatus =msgrcv(clientManagerMsgQ, &receivedMessage, sizeof(receivedMessage.key), getpid(), IPC_NOWAIT);
+            printf("The key of the added record is %d", receivedMessage.key);
         }
         else if(toSendMessage.operationMessage.operationNeeded==modify)
         {

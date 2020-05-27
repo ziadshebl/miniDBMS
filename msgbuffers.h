@@ -94,3 +94,9 @@ struct additionSuccessMessageBuffer
    long mtype;
    int key;
 };
+
+struct operationSuccessMessageBuffer
+{
+   long mtype;
+   int isOperationDone;    //0 for failure, 1 for success
+};
