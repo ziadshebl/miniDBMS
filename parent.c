@@ -40,7 +40,7 @@ int main(){
     key_t key = ftok(cwd,65); 
     clientManagerMsgQid = msgget(IPC_PRIVATE, 0644); // Initiallizing the buffer between client and the database manager
     printf("The Message Buffer Id is:%d \n",clientManagerMsgQid);
-    printf("the key is: %d",key);
+    printf("the key is: %d \n ",key);
 
     databaseSharedMemory = shmget(key,1024,0666|IPC_CREAT); // shmget returns an identifier in shmid 
     printf("The Shared memory Id is: %d \n",databaseSharedMemory);
