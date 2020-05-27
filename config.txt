@@ -4,12 +4,16 @@ noOfClients
 client1
 Add	AbdelrahmanEmam	1000
 Add	ZiadKamal	800
+Modify	1	+200
+Modify	2	-100
 endClient1
 
 client2
 Add	KarimWael	2000
+Modify	3	+500
 endClient2
 
 client3
 Add	NadaKhaled	5000
+Modify	1	-50
 endClient3
