@@ -19,7 +19,7 @@ int temp;
 
 struct clientManagerMsgBuffer message;//The message struct sent from the client to the manager to add a record.
 struct record *tuple;// A pointer of type record.
-//struct record *startOfTheSharedMemory;
+struct record *startOfTheSharedMemory;
 struct additionSuccessMessageBuffer onAdditionSuccess;//The message struct sent from the manager to the client to confirm addition.
 struct operationSuccessMessageBuffer onSuccessMessage;//The message struct sent to the manager when acquire and modification is successful.
 
@@ -39,7 +39,7 @@ int main(int argc, char*argv[])
     ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.    
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory ro the record pointer.
-    //startOfTheSharedMemory=tuple;
+    startOfTheSharedMemory=tuple;
 
     while(1)
     {
@@ -70,11 +70,11 @@ void addNewRecord()
     tuple->salary=message.operationMessage.addBuffer.salary;
     strcpy(tuple->name,message.operationMessage.addBuffer.name);
 
-    // printf("............................................................... \n");
-    // printf("The key is: %d \n",tuple->key);
-    // printf("The salary is: %d \n",tuple->salary);
-    // printf("The name is: %s \n",tuple->name);
-    // printf("............................................................... \n");
+    printf("............................................................... \n");
+    printf("The key  is: %d \n",tuple->key);
+    printf("The salary is: %d \n",tuple->salary);
+    printf("The name is: %s \n",tuple->name);
+    printf("............................................................... \n");
 
     
 
@@ -98,7 +98,7 @@ void addNewRecord()
 }
 void acquireRecord()
 {
-    printf("An acquire request is recieved..... \n");
+    //printf("An acquire request is recieved..... \n");
     //This function is going to be modified when semaphores are added.
     //printf("An acquire request is recieved... \n");
     //will check if this record is not locked.
@@ -107,7 +107,7 @@ void acquireRecord()
     onSuccessMessage.isOperationDone=1;
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
     if(messageSentStatus>-1){
-        printf("Acquire Message sent successfully... \n");
+        //printf("Acquire Message sent successfully... \n");
     }
     else{
         printf("Error in sending.... \n");
@@ -125,10 +125,26 @@ void acquireRecord()
 }
 void modifyRecord()
 {
-     printf("A modification request is recieved...................... \n");
-    //  temp=message.operationMessage.modifyBuffer.recordKey*sizeof(struct record);
-    //  printf("The key is: %d \n",(startOfTheSharedMemory+temp)->key);
-    //  printf("The salary is: %d \n",(startOfTheSharedMemory+temp)->salary);
-    //  printf("The name is: %s \n",(startOfTheSharedMemory+temp)->name);
+    // printf("A modification request is recieved...................... \n");
+     temp=message.operationMessage.modifyBuffer.recordKey*sizeof(struct record);
+     if(message.operationMessage.modifyBuffer.salaryOperation==increase) 
+     {(startOfTheSharedMemory+temp)->salary+=message.operationMessage.modifyBuffer.value;}
+     if(message.operationMessage.modifyBuffer.salaryOperation==decrease) 
+     {(startOfTheSharedMemory+temp)->salary-=message.operationMessage.modifyBuffer.value;}
+     printf("\n");
+     printf("The key to be edited  is: %d \n",(startOfTheSharedMemory+temp)->key);
+     printf("The salary  after editing is: %d \n",(startOfTheSharedMemory+temp)->salary);
+     printf("The name is: %s \n",(startOfTheSharedMemory+temp)->name);
+     printf("Edited...\n");
+     printf("\n");
+    onSuccessMessage.mtype=message.operationMessage.modifyBuffer.clientPID;
+    onSuccessMessage.isOperationDone=1;
+    messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the modify  of the tuple requested.
+    if(messageSentStatus>-1){
+        //printf("Modify Message sent successfully... \n");
+    }
+    else{
+        printf("Error in sending.... \n");
+    }
  }
 

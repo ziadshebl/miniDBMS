@@ -257,19 +257,19 @@ int main(int argc, char*argv[])
             toAcquireMessage.operationMessage.operationNeeded=acquire;
             send_val = msgsnd(clientManagerMsgQ, &toAcquireMessage, sizeof(toAcquireMessage.operationMessage), !IPC_NOWAIT);
             if(send_val > -1){
-                printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-                //int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
-                //if(operationSuccessMessage.isOperationDone == 1)
+                //printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
+                int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
+                if(operationSuccessMessage.isOperationDone == 1)
                 { 
-                    printf("Message for acquire success sent\n");
+                    //printf("Message for acquire success sent\n");
                     send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
                     if(send_val>-1)
                     {
-                        printf("Message to modify %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-                        //messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
-                        //if(operationSuccessMessage.isOperationDone==1)
+                        //printf("Message to modify %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
+                        messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
+                        if(operationSuccessMessage.isOperationDone==1)
                         {
-                            printf("Message for modification success\n");
+                            //printf("Message for modification success\n");
                         }
                     }
                 }

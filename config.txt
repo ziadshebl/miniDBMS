@@ -15,6 +15,6 @@ endClient2
 
 client3
 Add	NadaKhaled	5000
-Modify	1	-50
+Modify	2	-50
 Modify	2	-50
 endClient3
