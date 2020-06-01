@@ -17,6 +17,14 @@
 #define maxSalaryDigits 6
 #define maxNameCharacters 20
 #define maxIdDigits 6
+#define AcquireSemaphore 1
+#define ReleaseSemaphore 0
+
+struct msgbuff
+{
+    long mtype;
+    int SemaphoreStat;  
+};
 
 
 
@@ -27,7 +35,9 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
 
 
 int main(int argc, char*argv[])
-{
+{   
+    int loggerMsgQid = atoi(argv[5]);
+    int loggerPID = atoi(argv[6]);
     int clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
     int dbManagerPID = atoi(argv[4]);
@@ -40,14 +50,14 @@ int main(int argc, char*argv[])
     char textBuffer[maxNumberOfCharToBeRead];
     struct AllOperations clientOperations[maxOperationsNumber];
     int operationCounter=0;
+    
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
 
-
+    printf("I am the client and loggerPID is %d\n",loggerPID);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-
 
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
@@ -372,4 +382,3 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
     toModifyBuffer.clientPID=getpid();
     return toModifyBuffer;
 }
-
