@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include "msgbuffers.h"
+#include "loggerFunctions.c"
 
 
 #define configfileName "config.txt"
@@ -17,15 +18,6 @@
 #define maxSalaryDigits 6
 #define maxNameCharacters 20
 #define maxIdDigits 6
-#define AcquireSemaphore 1
-#define ReleaseSemaphore 0
-
-struct msgbuff
-{
-    long mtype;
-    int SemaphoreStat;  
-};
-
 
 
 int searchForAWord(char*wordToBeSearched);
@@ -58,7 +50,7 @@ int main(int argc, char*argv[])
     printf("I am the client and loggerPID is %d\n",loggerPID);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-
+    SendMessageToAcquireSemaphore(loggerMsgQid,loggerPID);
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
