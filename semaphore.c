@@ -1,10 +1,4 @@
-#include <stdatomic.h>
-#include <stdio.h>
-#include <signal.h>
-#include "semaphore.h"
-#define MAX_PROCESSES 100
-
-
+#include"semaphore.h"
 //Queue functions
 void enqueue(struct queue * _queue,int processID)
 {
