@@ -29,6 +29,7 @@ int messageRecieveStatus;//A variable to check if a message is recieved or not.
 int messageSentStatus;
 int loggerMsgQid;
 int loggerPID;
+int loggerSharedMemoryID;
 
 void addNewRecord();
 void acquireRecord();
@@ -37,12 +38,13 @@ void modifyRecord();
 //MAIN Function.
 int main(int argc, char*argv[])
 {
+    loggerSharedMemoryID = atoi(argv[5]);
     loggerMsgQid = atoi(argv[3]);
     loggerPID = atoi(argv[4]);
-    printf("I am the manager and loggerPID is %d\n",loggerPID);
+    printf("I am the manager and logger shared memory ID is %d\n",loggerSharedMemoryID);
     ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.    
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
-    tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory ro the record pointer.
+    tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
     startOfTheSharedMemory=tuple;
     
     while(1)

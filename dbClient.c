@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include "msgbuffers.h"
+#include "loggerFunctions.c"
 
 
 #define configfileName "config.txt"
@@ -17,14 +18,7 @@
 #define maxSalaryDigits 6
 #define maxNameCharacters 20
 #define maxIdDigits 6
-#define AcquireSemaphore 1
-#define ReleaseSemaphore 0
 
-struct msgbuff
-{
-    long mtype;
-    int SemaphoreStat;  
-};
 
 
 
@@ -35,7 +29,7 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
 
 
 int main(int argc, char*argv[])
-{   
+{   int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
     int clientNumber = atoi(argv[1]);
@@ -55,10 +49,11 @@ int main(int argc, char*argv[])
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
 
-    printf("I am the client and loggerPID is %d\n",loggerPID);
+    printf("I am the client and logger shared memory ID is %d\n",loggerSharedMemoryID);
+
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-
+    Log(clientStart, loggerMsgQid, loggerPID);
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
