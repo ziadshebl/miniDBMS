@@ -1,4 +1,4 @@
-#include <semaphore.c>
+#include "semaphore.c"
 
 struct queue
 {

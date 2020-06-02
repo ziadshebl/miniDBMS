@@ -1,7 +1,6 @@
 #include <stdatomic.h>
 #include <stdio.h>
 #include <signal.h>
-#include "semaphore.h"
 #define MAX_PROCESSES 100
 
 

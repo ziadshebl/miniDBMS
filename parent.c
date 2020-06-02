@@ -56,7 +56,7 @@ int main(){
     databaseSharedMemory = shmget(KEY,sizeOfMessageBuffer,0644|IPC_CREAT); // shmget returns an identifier in shmid 
     printf("The Shared memory Id is: %d \n",databaseSharedMemory);
 
-    loggerSharedMemory = shmget(KEY2, sizeOfMessageBuffer, 0644| IPC_CREAT );
+    loggerSharedMemory = shmget(KEY2, sizeof(struct loggerMsg), 0644| IPC_CREAT );
     printf("The logger shared memory ID is: %d\n",loggerSharedMemory);
     sprintf(loggerSharedMemoryChar,"%d",loggerSharedMemory);
 

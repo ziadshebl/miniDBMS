@@ -1,5 +1,17 @@
+#include "msgbuffers.h"
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+
 #define AcquireSemaphore 1
 #define ReleaseSemaphore 0
+
 
 struct msgbuff
 {
@@ -11,7 +23,7 @@ struct msgbuff
 int SendMessageToAcquireSemaphore(int MsgQid, int RecieverPID);
 int SendMessageToReleaseSemaphore(int MsgQid, int RecieverPID);
 int RecieveMessage(int MsgQid);
-void Log(char* LogMessage, int MsgQid, int LoggerPID);
+void Log(char* LogMessage, int MsgQid, int LoggerPID, int loggerSharedMemoryID);
 int loggerFunctions(){
 
 
@@ -75,13 +87,17 @@ int RecieveMessage(int MsgQid){
     }
     
 }
-void Log(char* LogMessage, int MsgQid, int LoggerPID ){
+void Log(char* SentLogMessage, int MsgQid, int LoggerPID, int loggerSharedMemoryID ){
 
+    kill(LoggerPID,SIGCONT);
     SendMessageToAcquireSemaphore(MsgQid, LoggerPID);
     RecieveMessage(MsgQid);
 
 
     //Write in shared memory
-    printf("This is Process %d an I am Now Logging..\n", getpid());
+    struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
+    strcpy(MemoryAddress->Msg,SentLogMessage);
+
     SendMessageToReleaseSemaphore(MsgQid,LoggerPID);
+    shmdt(MemoryAddress);
 }

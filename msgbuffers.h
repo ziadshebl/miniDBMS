@@ -38,6 +38,10 @@ struct logMsgBuffer
    long mtype;
    char messageToLog[maxCharactersOfLogMessage];
 };
+struct loggerMsg{
+   char Msg[100];
+   int senderPID;
+};
 
 
 enum salaryRetrieveOperation {
