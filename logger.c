@@ -53,8 +53,7 @@ printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
 
 while(1){
 
-
-    RecieveMessage(loggerMsgQid);
+    //RecieveMessage(loggerMsgQid);
 }
 
 }

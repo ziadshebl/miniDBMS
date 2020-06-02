@@ -46,12 +46,13 @@ int main(int argc, char*argv[])
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
     startOfTheSharedMemory=tuple;
-    
+    printf("memory id is: %d,address is:%d",sharedMemoryId,tuple);
     while(1)
     {
         messageRecieveStatus=msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), IPC_NOWAIT);//Recieving a message 
         if(messageRecieveStatus>-1)
         {
+            printf("message soperation is %d \n",message.operationMessage.operationNeeded);
             if(message.operationMessage.operationNeeded==add)
             {
                 addNewRecord();//Adds a new record from the last message sent to the shared memory.
@@ -75,6 +76,7 @@ void addNewRecord()
     tuple->key=key;
     tuple->salary=message.operationMessage.addBuffer.salary;
     strcpy(tuple->name,message.operationMessage.addBuffer.name);
+
 
     printf("............................................................... \n");
     printf("The key  is: %d \n",tuple->key);

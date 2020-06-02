@@ -49,11 +49,11 @@ int main(int argc, char*argv[])
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
 
-    printf("I am the client and logger shared memory ID is %d\n",loggerSharedMemoryID);
+    printf("I am the client ,manager PID is %d and logger shm ID: %d, datbase shm ID: %d\n",dbManagerPID,loggerSharedMemoryID,databaseSharedMemory);
 
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-    Log(clientStart, loggerMsgQid, loggerPID);
+    //Log(clientStart, loggerMsgQid, loggerPID);
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
@@ -245,7 +245,7 @@ int main(int argc, char*argv[])
         struct additionSuccessMessageBuffer additionSuccessMessage;
         if(toSendMessage.operationMessage.operationNeeded==add)
         {
-            
+            printf("Now sending add message: \n");
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
             int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
             printf("The key of the added record is %d\n", additionSuccessMessage.key);

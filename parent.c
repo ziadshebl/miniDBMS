@@ -35,6 +35,7 @@ int main(){
     char dbManagerPIDChar[5];
     char loggerPIDChar[5];
     char loggerSharedMemoryChar[10];
+    char queryLoggerPIDChar[5];
     int numberOfClients;
     int lineNumber;
     int totalNumberOfChildren;
@@ -45,16 +46,21 @@ int main(){
     int dbManagerPID;
     int loggerPID;
     int loggerMsgQid;                           //The id for the buffer between all processes and the logger
+    int queryLoggerPID;
 
     loggerMsgQid = msgget(IPC_PRIVATE, 0644);   //Initalizing the buffer between all processes and the logger
     printf("The Logger Message Buffer Id is:%d \n",loggerMsgQid); 
-     sprintf(loggerMsgQidChar,"%d",loggerMsgQid);  
+    sprintf(loggerMsgQidChar,"%d",loggerMsgQid);  
 
     clientManagerMsgQid = msgget(IPC_PRIVATE, 0644); // Initiallizing the buffer between client and the database manager
     printf("The Client-Manager Message Buffer Id is:%d \n",clientManagerMsgQid);
+    sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
 
-    databaseSharedMemory = shmget(KEY,sizeOfMessageBuffer,0644|IPC_CREAT); // shmget returns an identifier in shmid 
+    databaseSharedMemory = shmget(KEY,sizeOfMessageBuffer,0644|IPC_CREAT); // shmget returns an identifier in shmid
+    printf("database shared meory id is: %d\n",databaseSharedMemory);
     printf("The Shared memory Id is: %d \n",databaseSharedMemory);
+    sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory); 
+    printf("data base shared mem id in string is %s\n",databaseSharedMemoryChar);
 
     loggerSharedMemory = shmget(KEY2, sizeOfMessageBuffer, 0644| IPC_CREAT );
     printf("The logger shared memory ID is: %d\n",loggerSharedMemory);
@@ -69,58 +75,68 @@ int main(){
     totalNumberOfChildren=numberOfClients+3;
     printf("%d\n",numberOfClients);
 
-
-     for(int child=0; child<totalNumberOfChildren; child++){
-        if(pid!=0 || child==0)
-        {
-            pid=fork(); 
-            if(child ==0)
-            {
-                loggerPID = pid;
-                sprintf(loggerPIDChar,"%d",loggerPID);
-                printf("The Logger ID is: %d \n", pid);
-            }
-            if(child==2)
-            {
-                dbManagerPID = pid;
-            }
-            if(child>2)
-            {
-                 numberOfClients=numberOfClients-1;
-            }
-            if(child==0 && pid==0){
-                
-                char *argv[] = {"logger.o",loggerMsgQidChar,loggerSharedMemoryChar ,0};
-                execve(argv[0], &argv[0], NULL);
-            }
-            else if(child == 1 && pid==0)
-            {
-                char *argv[] = {"queryLogger.o", 0};
-                execve(argv[0], &argv[0], NULL);
-            }
-            else if(child == 2 && pid==0)
-            {
-                dbManagerPID = pid;
-                printf("ID: %d\n",dbManagerPID);
-                sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
-                sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
-                char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,loggerMsgQidChar,loggerPIDChar,loggerSharedMemoryChar,0};
-                execve(argv[0], &argv[0], NULL);
-            }
-            else if(pid==0)
-            {
-                sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
-                sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
-                sprintf(dbManagerPIDChar,"%d",dbManagerPID);
-                char clientNumber[2];
-                sprintf(clientNumber, "%d", numberOfClients+1);
-                char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar,loggerMsgQidChar,loggerPIDChar ,loggerSharedMemoryChar,0};
-                execve(argv[0], &argv[0], NULL);
-
-            }
-        }
+    //Fokring children
+    //Forking logger
+    pid=fork();
+    if(pid== 0)
+    {
+        char *argv[] = {"logger.o",loggerMsgQidChar,loggerSharedMemoryChar ,0};
+        execve(argv[0], &argv[0], NULL);
+    }
+    else
+    {
+        loggerPID = pid;
+        sprintf(loggerPIDChar,"%d",loggerPID);
+        printf("The Logger ID is: %d \n", pid);
     }
 
+    //Forking QueryLogger
+    pid=fork();
+    if(pid==0)
+    {
+        char *argv[] = {"queryLogger.o", 0};
+        execve(argv[0], &argv[0], NULL);
+    }
+    else
+    {
+        queryLoggerPID = pid;
+        sprintf(queryLoggerPIDChar,"%d",queryLoggerPID);
+        printf("The Query logger ID is: %d \n", pid);
+    }
+
+    //Forking DB manager
+    pid=fork();
+    if(pid==0)
+    {
+        sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory); 
+        printf("data base shared mem id in string is %s\n",databaseSharedMemoryChar);
+        char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,loggerMsgQidChar,loggerPIDChar,loggerSharedMemoryChar,0};
+        execve(argv[0], &argv[0], NULL);
+    }
+    else
+    {
+        dbManagerPID = pid;
+        sprintf(dbManagerPIDChar,"%d",dbManagerPID);
+        printf("The DB manager ID is: %d \n", pid);
+    }
+
+    //Forking clients
+    for(int i=0;i<numberOfClients;i++)
+    {
+        pid=fork();
+        if(pid==0)
+        {
+            char clientNumber[2];
+            sprintf(clientNumber, "%d", i+1);
+            sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
+            char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar,loggerMsgQidChar,loggerPIDChar ,loggerSharedMemoryChar,0};
+            execve(argv[0], &argv[0], NULL);
+        }
+        else
+        {
+            printf("Client %d PID is: %d",i+1,pid);
+        }
+    }
 
      for (int childNumber=0; childNumber<totalNumberOfChildren; childNumber++){
             int stat_loc;
@@ -133,7 +149,6 @@ int main(){
     sleep(5);    
 
 }
-
 
 int searchForAWord(char*wordToBeSearched)
 {
