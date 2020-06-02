@@ -20,6 +20,8 @@
 #define maxIdDigits 6
 
 
+
+
 int searchForAWord(char*wordToBeSearched);
 void readFromALine(int lineNeeded, char*characterFound);
 struct addRecordBuffer createAddRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters]);
@@ -27,7 +29,7 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
 
 
 int main(int argc, char*argv[])
-{   
+{   int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
     int clientNumber = atoi(argv[1]);
@@ -47,10 +49,11 @@ int main(int argc, char*argv[])
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
 
-    printf("I am the client and loggerPID is %d\n",loggerPID);
+    printf("I am the client and logger shared memory ID is %d\n",loggerSharedMemoryID);
+
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-    SendMessageToAcquireSemaphore(loggerMsgQid,loggerPID);
+    Log(clientStart, loggerMsgQid, loggerPID);
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);

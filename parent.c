@@ -34,12 +34,14 @@ int main(){
     char loggerMsgQidChar[10];
     char dbManagerPIDChar[5];
     char loggerPIDChar[5];
+    char loggerSharedMemoryChar[10];
     int numberOfClients;
     int lineNumber;
     int totalNumberOfChildren;
     int pid;
     int clientManagerMsgQid;                    // The id for the buffer between client and the database manager
     int databaseSharedMemory;
+    int loggerSharedMemory;
     int dbManagerPID;
     int loggerPID;
     int loggerMsgQid;                           //The id for the buffer between all processes and the logger
@@ -53,6 +55,10 @@ int main(){
 
     databaseSharedMemory = shmget(KEY,sizeOfMessageBuffer,0644|IPC_CREAT); // shmget returns an identifier in shmid 
     printf("The Shared memory Id is: %d \n",databaseSharedMemory);
+
+    loggerSharedMemory = shmget(KEY2, sizeOfMessageBuffer, 0644| IPC_CREAT );
+    printf("The logger shared memory ID is: %d\n",loggerSharedMemory);
+    sprintf(loggerSharedMemoryChar,"%d",loggerSharedMemory);
 
     //Reading the number of clients from the configuration file
     lineNumber = searchForAWord("noOfClients");
@@ -85,7 +91,7 @@ int main(){
             }
             if(child==0 && pid==0){
                 
-                char *argv[] = {"logger.o",loggerMsgQidChar, 0};
+                char *argv[] = {"logger.o",loggerMsgQidChar,loggerSharedMemoryChar ,0};
                 execve(argv[0], &argv[0], NULL);
             }
             else if(child == 1 && pid==0)
@@ -99,7 +105,7 @@ int main(){
                 printf("ID: %d\n",dbManagerPID);
                 sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
                 sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
-                char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,loggerMsgQidChar,loggerPIDChar,0};
+                char *argv[] = {"dbManager.o", databaseSharedMemoryChar,clientManagerMsgQidChar,loggerMsgQidChar,loggerPIDChar,loggerSharedMemoryChar,0};
                 execve(argv[0], &argv[0], NULL);
             }
             else if(pid==0)
@@ -109,7 +115,7 @@ int main(){
                 sprintf(dbManagerPIDChar,"%d",dbManagerPID);
                 char clientNumber[2];
                 sprintf(clientNumber, "%d", numberOfClients+1);
-                char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar,loggerMsgQidChar,loggerPIDChar ,0};
+                char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar,loggerMsgQidChar,loggerPIDChar ,loggerSharedMemoryChar,0};
                 execve(argv[0], &argv[0], NULL);
 
             }
