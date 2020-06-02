@@ -1,4 +1,7 @@
-#include "semaphore.c"
+#include <stdatomic.h>
+#include <stdio.h>
+#include <signal.h>
+#define MAX_PROCESSES 100
 
 struct queue
 {
@@ -10,7 +13,6 @@ struct semaphore
 {
     atomic_int semaphoreValue;
     struct queue sleepingProcesses;
-
 };
 
 int acquireSemaphore(struct semaphore *_semaphore,int pid);
