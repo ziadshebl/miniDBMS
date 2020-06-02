@@ -73,7 +73,6 @@ int main(){
                 loggerPID = pid;
                 sprintf(loggerPIDChar,"%d",loggerPID);
                 printf("The Logger ID is: %d \n", pid);
-
             }
             if(child==2)
             {
