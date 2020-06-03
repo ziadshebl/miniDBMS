@@ -8,7 +8,6 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <time.h>
-#include "msgbuffers.h"
 #include "loggerFunctions.c"
 
 
@@ -44,7 +43,7 @@ int main(int argc, char*argv[])
     char textBuffer[maxNumberOfCharToBeRead];
     struct AllOperations clientOperations[maxOperationsNumber];
     int operationCounter=0;
-    
+    char logMsg[100] = "this is client testing log function..";
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
@@ -53,7 +52,7 @@ int main(int argc, char*argv[])
 
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-    Log(clientStart, loggerMsgQid, loggerPID);
+    Log(logMsg, loggerMsgQid, loggerPID, loggerSharedMemoryID);
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);

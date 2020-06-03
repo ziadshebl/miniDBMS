@@ -18,7 +18,8 @@
 #define maxNumberOfCharToBeRead 1024
 #define sizeOfMessageBuffer 28000 
 #define KEY 0x1234
-#define KEY2 0x5678
+#define KEY2 0x100
+
 
 
 int searchForAWord(char*wordToBeSearched);
@@ -44,7 +45,8 @@ int main(){
     int loggerSharedMemory;
     int dbManagerPID;
     int loggerPID;
-    int loggerMsgQid;                           //The id for the buffer between all processes and the logger
+    int loggerMsgQid;
+    int shmkey;                           //The id for the buffer between all processes and the logger
 
     loggerMsgQid = msgget(IPC_PRIVATE, 0644);   //Initalizing the buffer between all processes and the logger
     printf("The Logger Message Buffer Id is:%d \n",loggerMsgQid); 
@@ -56,7 +58,8 @@ int main(){
     databaseSharedMemory = shmget(KEY,sizeOfMessageBuffer,0644|IPC_CREAT); // shmget returns an identifier in shmid 
     printf("The Shared memory Id is: %d \n",databaseSharedMemory);
 
-    loggerSharedMemory = shmget(KEY2, sizeof(struct loggerMsg), 0644| IPC_CREAT );
+    shmkey = ftok("shmfile",65);
+    loggerSharedMemory = shmget(KEY2, 10 * sizeof(struct loggerMsg), 0644| IPC_CREAT );
     printf("The logger shared memory ID is: %d\n",loggerSharedMemory);
     sprintf(loggerSharedMemoryChar,"%d",loggerSharedMemory);
 
