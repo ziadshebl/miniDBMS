@@ -1,5 +1,6 @@
 #include "record.h"
 #define maxCharactersOfLogMessage   100
+#define MAX_RECORDS  100
 
 struct addRecordBuffer
 {
@@ -8,29 +9,10 @@ struct addRecordBuffer
    int salary;
 };
 
-enum modifySalaryOperation {
-   increase,
-   decrease
-};
-
-struct modifyRecordBuffer
+struct semaphoreOperationsBuffer
 {
    int clientPID;
    int recordKey;
-   enum modifySalaryOperation salaryOperation;
-   int value;
-};
-
-struct acquireRecordBuffer
-{
-   int clientPID;
-   int keyOfRecordToBeAcquired;
-};
-
-struct releaseRecordBuffer
-{
-   int clientPID;
-   int keyOfRecordToBeReleased;
 };
 
 struct logMsgBuffer
@@ -67,6 +49,19 @@ struct retrieveBuffer
    enum salaryRetrieveOperation salaryOperation;
 };
 
+enum modifySalaryOperation {
+   increase,
+   decrease
+};
+
+struct modifyRecordBuffer
+{
+   int clientPID;
+   int recordKey;
+   enum modifySalaryOperation salaryOperation;
+   int value;
+};
+
 enum operation{
    add,
    modify,
@@ -79,10 +74,10 @@ struct AllOperations
 {
    enum operation operationNeeded;
    struct addRecordBuffer  addBuffer;
+   struct semaphoreOperationsBuffer  semaphoreOperationsBuffer;
    struct modifyRecordBuffer  modifyBuffer;
-   struct retrieveBuffer  retrieveBuffer;
-   struct acquireRecordBuffer acquireBuffer;
-   struct releaseRecordBuffer releaseBuffer;
+   struct retrieveBuffer retrieveBuffer;  
+   //struct releaseRecordBuffer releaseBuffer;
    
 };
 
@@ -103,3 +98,11 @@ struct operationSuccessMessageBuffer
    long mtype;
    int isOperationDone;    //0 for failure, 1 for success
 };
+
+/*
+struct acquireRecordBuffer
+{
+   int clientPID;
+   int keyOfRecordToBeAcquired;
+};
+*/

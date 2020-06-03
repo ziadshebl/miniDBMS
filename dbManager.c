@@ -13,6 +13,7 @@
 #include<sys/types.h>
 #include<errno.h>
 #include "msgbuffers.h"
+#include "semaphore.h"
 
 int key=0;//Key accumlator.
 int temp;
@@ -22,6 +23,7 @@ struct record *tuple;// A pointer of type record.
 struct record *startOfTheSharedMemory;
 struct additionSuccessMessageBuffer onAdditionSuccess;//The message struct sent from the manager to the client to confirm addition.
 struct operationSuccessMessageBuffer onSuccessMessage;//The message struct sent to the manager when acquire and modification is successful.
+struct semaphore recordsSemaphores[MAX_RECORDS];
 
 int ManagerClientMessageQid;//A variable to recieve queue id.
 int sharedMemoryId;//A variable to recieve shared memory.
@@ -34,6 +36,7 @@ int loggerSharedMemoryID;
 void addNewRecord();
 void acquireRecord();
 void modifyRecord();
+void releaseRecord();
 
 //MAIN Function.
 int main(int argc, char*argv[])
@@ -47,6 +50,14 @@ int main(int argc, char*argv[])
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
     startOfTheSharedMemory=tuple;
     printf("memory id is: %d,address is:%d",sharedMemoryId,tuple);
+
+    //Intializing semaphores
+    for (int index=0;index<MAX_RECORDS;index++)
+    {
+        recordsSemaphores[index].semaphoreValue=-1;
+        recordsSemaphores[index].sleepingProcesses.rear=-1;
+    }
+
     while(1)
     {
         messageRecieveStatus=msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), IPC_NOWAIT);//Recieving a message 
@@ -64,6 +75,10 @@ int main(int argc, char*argv[])
             else if(message.operationMessage.operationNeeded==modify)
             {
                 modifyRecord();
+            }
+            else if(message.operationMessage.operationNeeded==release)
+            {
+                releaseRecord();
             }
             
         }
@@ -104,6 +119,19 @@ void addNewRecord()
         tuple+=sizeof(struct record);//Incrementing the pointer pointing to the shared memory by the size of the struct added.
     }
 }
+
+void sendReleaseMessage(int pid)
+{
+    onSuccessMessage.mtype=pid;
+    onSuccessMessage.isOperationDone=1;
+    messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
+    if(messageSentStatus>-1){
+    //printf("Acquire Message sent successfully... \n");
+    }
+    else{
+        printf("Error in sending.... \n");
+    }
+}
 void acquireRecord()
 {
     //printf("An acquire request is recieved..... \n");
@@ -111,26 +139,22 @@ void acquireRecord()
     //printf("An acquire request is recieved... \n");
     //will check if this record is not locked.
     //if yes.
-    onSuccessMessage.mtype=message.operationMessage.acquireBuffer.clientPID;
-    onSuccessMessage.isOperationDone=1;
-    messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
-    if(messageSentStatus>-1){
-        //printf("Acquire Message sent successfully... \n");
-    }
-    else{
-        printf("Error in sending.... \n");
-    }
-    //if no
-    // onSuccessMessage.mtype=message.operationMessage.addBuffer.clientPID;
-    // onSuccessMessage.isOperationDone=0;
-    // messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
-    // if(messageSentStatus>-1){
-    //     printf("Acquire Message sent successfully... \n");
-    // }
-    // else{
-    //     printf("Error in sending.... \n");
-    // }
+    int reqsemaphore=message.operationMessage.semaphoreOperationsBuffer.recordKey;
+    int returnValue=acquireSemaphore(&recordsSemaphores[reqsemaphore],message.operationMessage.semaphoreOperationsBuffer.clientPID);
+    if(returnValue==0)
+        sendReleaseMessage(message.operationMessage.semaphoreOperationsBuffer.clientPID);
 }
+
+void releaseRecord()
+{
+    int reqsemaphore=message.operationMessage.semaphoreOperationsBuffer.recordKey;
+    int awakenedProcess=releaseSemaphore(&recordsSemaphores[reqsemaphore]);
+    //if process is awakened send release record
+    if(awakenedProcess!=0)
+        sendReleaseMessage(awakenedProcess);
+}   
+
+/*
 void modifyRecord()
 {
     // printf("A modification request is recieved...................... \n");
@@ -155,4 +179,4 @@ void modifyRecord()
         printf("Error in sending.... \n");
     }
  }
-
+*/

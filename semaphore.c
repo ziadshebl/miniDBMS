@@ -47,10 +47,10 @@ int acquireSemaphore(struct semaphore *_semaphore,int pid)
     printf("value after subtract %d\n",_semaphore->semaphoreValue);
     //comparison is made with value returned from subtract atomic operation
     //lock is not acquired
-    if(oldVal!= 1)
+    if(oldVal<=0)
     {
         enqueue(&(_semaphore->sleepingProcesses),pid);
-        //kill(pid,SIGSTOP);
+        kill(pid,SIGSTOP);
         return -1;
     }
     //lock is acquired
@@ -64,7 +64,8 @@ int releaseSemaphore(struct semaphore *_semaphore)
     printf("value before add:%d\n",oldVal);
     printf("value after add %d\n",_semaphore->semaphoreValue);
     //waiting process i queue
-    if(oldVal != 0)
+    //todo::
+    if(oldVal<0)
     {
         int processToWake=dequeue(&(_semaphore->sleepingProcesses));
         //kill(processToWake,SIGCONT);
