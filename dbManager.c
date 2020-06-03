@@ -12,7 +12,7 @@
 #include<sys/shm.h>
 #include<sys/types.h>
 #include<errno.h>
-#include "msgbuffers.h"
+#include "utils.h"
 #include "semaphore.h"
 
 int key=0;//Key accumlator.
@@ -128,6 +128,7 @@ void sendReleaseMessage(int pid)
 {
     onSuccessMessage.mtype=pid;
     onSuccessMessage.isOperationDone=1;
+    onSuccessMessage.numberOfRecords=key-1;
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
     if(messageSentStatus>-1){
     //printf("Acquire Message sent successfully... \n");

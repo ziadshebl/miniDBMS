@@ -10,11 +10,11 @@ endClient1
 
 client2
 Add	KarimWael	2000
-Modify	3	+500
+Modify	1	+500
 endClient2
 
 client3
 Add	NadaKhaled	5000
-Modify	2	-50
+Modify	1	-50
 Modify	2	-50
 endClient3

@@ -1,6 +1,18 @@
+
+#define NAME_LENGTH 20
 #define maxCharactersOfLogMessage   100
 #define MAX_RECORDS  100
 
+//Record struct
+struct record
+{
+   int key;
+   char name [NAME_LENGTH];
+   int salary; 
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//Message Buffers
 struct addRecordBuffer
 {
    int clientPID;
@@ -106,3 +118,7 @@ struct acquireRecordBuffer
    int keyOfRecordToBeAcquired;
 };
 */
+
+///////////////////////////////////////////////////////////////////////////////
+//Function declerations
+void dumbMemory(struct record* memoryStartAddress,int numberOfEntries);

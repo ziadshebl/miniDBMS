@@ -9,9 +9,8 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <time.h>
-#include "msgbuffers.h"
+#include "utils.h"
 #include "loggerFunctions.c"
-//#include "record.h"
 
 
 #define configfileName "config.txt"
@@ -33,6 +32,7 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
 
 int dbManagerPID;
 struct record * databaseMemoryBegining;
+int numberOfRecords;
 
 int main(int argc, char*argv[])
 {   int loggerSharedMemoryID = atoi(argv[7]);

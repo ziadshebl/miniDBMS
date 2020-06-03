@@ -11,8 +11,7 @@
 #include<sys/shm.h>
 #include<sys/types.h>
 #include<errno.h>
-#include "msgbuffers.h"
-//#include "record.h"
+#include "utils.h"
 
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024

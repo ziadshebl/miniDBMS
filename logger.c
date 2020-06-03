@@ -8,7 +8,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <time.h>
-#include "msgbuffers.h"
+#include "utils.h"
 
 struct msgbuff
 {
