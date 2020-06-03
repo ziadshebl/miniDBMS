@@ -20,6 +20,8 @@ struct msgbuff
 int RecieveMessage(int MsgQid);
 
 int main(int argc, char* argv[]){
+    //for(int i=0;i<argc;i++)
+      //  printf("logger argv[%d]%s\n",i,argv[i]);
 
 FILE * LoggingOutputFile= fopen("LoggingOutputFile","w+");
 
@@ -47,9 +49,9 @@ fputs(string,LoggingOutputFile);
 
 
 fclose(LoggingOutputFile);   
-printf("I am the logger and my pid is %d\n",getpid());
-printf("I am the logger and my msgQid is %d\n",loggerMsgQid);
-printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
+//printf("I am the logger and my pid is %d\n",getpid());
+//printf("I am the logger and my msgQid is %d\n",loggerMsgQid);
+//printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
 
 while(1){
 
@@ -70,7 +72,7 @@ int RecieveMessage(int MsgQid){
         return -1;
     }else
     {
-        printf("Message Recieved From %d\n", message.SenderPID);
+        //printf("Message Recieved From %d\n", message.SenderPID);
         struct msgbuff message2;
 
     message2.mtype = message.SenderPID;
