@@ -56,6 +56,7 @@ int main(int argc, char*argv[])
     strcat(clientEnd,clientNumberChar);
 
     printf("I am the client ,manager PID is %d and logger shm ID: %d, datbase shm ID: %d\n",dbManagerPID,loggerSharedMemoryID,databaseSharedMemory);
+    printf("MsgQ ID: %d\n",clientManagerMsgQ);
     //attaching shared memory
     databaseMemoryBegining =shmat(databaseSharedMemory,NULL,0);//Attchment to the shared memory to the record pointer.
 
@@ -254,6 +255,7 @@ int main(int argc, char*argv[])
         {
             printf("Now sending add message: \n");
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
+            printf("Message sent from child %d\n",getpid());
             int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
             printf("The key of the added record is %d\n", additionSuccessMessage.key);
             printf("id:%d,name:%s,salary:%d\n",databaseMemoryBegining->key,databaseMemoryBegining->name,databaseMemoryBegining->salary);

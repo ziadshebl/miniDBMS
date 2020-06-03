@@ -35,7 +35,7 @@ int loggerSharedMemoryID;
 
 void addNewRecord();
 void acquireRecord();
-void modifyRecord();
+//void modifyRecord();
 void releaseRecord();
 
 //MAIN Function.
@@ -45,16 +45,17 @@ int main(int argc, char*argv[])
     loggerMsgQid = atoi(argv[3]);
     loggerPID = atoi(argv[4]);
     printf("I am the manager and logger shared memory ID is %d\n",loggerSharedMemoryID);
-    ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.    
+    ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.  
+    printf("MsgQ PID is: %d\n",ManagerClientMessageQid);  
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
     startOfTheSharedMemory=tuple;
-    printf("memory id is: %d,address is:%d",sharedMemoryId,tuple);
+    printf("memory id is: %d,address is:%d\n",sharedMemoryId,tuple);
 
     //Intializing semaphores
     for (int index=0;index<MAX_RECORDS;index++)
     {
-        recordsSemaphores[index].semaphoreValue=-1;
+        recordsSemaphores[index].semaphoreValue=1;
         recordsSemaphores[index].sleepingProcesses.rear=-1;
     }
 
@@ -72,10 +73,12 @@ int main(int argc, char*argv[])
             {
                 acquireRecord();//Aquire a record from the last message sent to the shared memory.
             }
+            /*
             else if(message.operationMessage.operationNeeded==modify)
             {
                 modifyRecord();
             }
+            */
             else if(message.operationMessage.operationNeeded==release)
             {
                 releaseRecord();
@@ -88,6 +91,7 @@ int main(int argc, char*argv[])
 void addNewRecord()
 {
     //Adding the last message sent data to the shared memory.
+    printf("Now adding new record in Manager\n");
     tuple->key=key;
     tuple->salary=message.operationMessage.addBuffer.salary;
     strcpy(tuple->name,message.operationMessage.addBuffer.name);
