@@ -31,6 +31,7 @@ int main(){
     char databaseSharedMemoryChar[10];
     char clientManagerMsgQidChar[10];
     char loggerMsgQidChar[10];
+    char queryLoggerMsqQidChar[10];
     char dbManagerPIDChar[5];
     char loggerPIDChar[5];
     char loggerSharedMemoryChar[10];
@@ -46,6 +47,11 @@ int main(){
     int loggerPID;
     int loggerMsgQid;                           //The id for the buffer between all processes and the logger
     int queryLoggerPID;
+    int queryLoggerMsgQid;
+
+    queryLoggerMsgQid=msgget(IPC_PRIVATE, 0644);
+    printf("The Query logger Message Buffer Id is:%d \n",queryLoggerMsgQid); 
+    sprintf(queryLoggerMsqQidChar,"%d",queryLoggerMsgQid);  
 
     loggerMsgQid = msgget(IPC_PRIVATE, 0644);   //Initalizing the buffer between all processes and the logger
     printf("The Logger Message Buffer Id is:%d \n",loggerMsgQid); 
@@ -93,7 +99,7 @@ int main(){
     pid=fork();
     if(pid==0)
     {
-        char *argv[] = {"queryLogger.o", 0};
+        char *argv[] = {"queryLogger.o",queryLoggerMsqQidChar, 0};
         execve(argv[0], &argv[0], NULL);
     }
     else
@@ -128,7 +134,10 @@ int main(){
             char clientNumber[2];
             sprintf(clientNumber, "%d", i+1);
             sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory);
-            char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar,loggerMsgQidChar,loggerPIDChar ,loggerSharedMemoryChar,0};
+            printf("Databasesharedmem id %s\n",databaseSharedMemoryChar);
+            sprintf(queryLoggerPIDChar,"%d",queryLoggerPID);
+            char *argv[] = {"dbClient.o",clientNumber,databaseSharedMemoryChar,clientManagerMsgQidChar,dbManagerPIDChar,
+            loggerMsgQidChar,loggerPIDChar ,loggerSharedMemoryChar,queryLoggerPIDChar,queryLoggerMsqQidChar,0};
             execve(argv[0], &argv[0], NULL);
         }
         else

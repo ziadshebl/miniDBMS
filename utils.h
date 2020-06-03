@@ -13,6 +13,7 @@ struct record
 
 ///////////////////////////////////////////////////////////////////////////////
 //Message Buffers
+///Client-Manager message Buffers
 struct addRecordBuffer
 {
    int clientPID;
@@ -104,11 +105,12 @@ struct additionSuccessMessageBuffer
    int key;
 };
 
+//TODO:: add number of records
 struct operationSuccessMessageBuffer
 {
    long mtype;
    int isOperationDone;    //0 for failure, 1 for success
-   int numberOfRecords;
+   //int numberOfRecords;
 };
 
 /*
@@ -118,6 +120,13 @@ struct acquireRecordBuffer
    int keyOfRecordToBeAcquired;
 };
 */
+//Query Logger Message Buffers
+struct queryLoggerMsgBuffer
+{
+    long mtype;
+    enum operation neededoperation;
+    int senderPID;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 //Function declerations

@@ -128,7 +128,7 @@ void sendReleaseMessage(int pid)
 {
     onSuccessMessage.mtype=pid;
     onSuccessMessage.isOperationDone=1;
-    onSuccessMessage.numberOfRecords=key-1;
+    //onSuccessMessage.numberOfRecords=key-1;
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
     if(messageSentStatus>-1){
     //printf("Acquire Message sent successfully... \n");
@@ -139,15 +139,15 @@ void sendReleaseMessage(int pid)
 }
 void acquireRecord()
 {
-    //printf("An acquire request is recieved..... \n");
-    //This function is going to be modified when semaphores are added.
-    //printf("An acquire request is recieved... \n");
-    //will check if this record is not locked.
-    //if yes.
+    printf("An acquire request is recieved..... \n");
     int reqsemaphore=message.operationMessage.semaphoreOperationsBuffer.recordKey;
     int returnValue=acquireSemaphore(&recordsSemaphores[reqsemaphore],message.operationMessage.semaphoreOperationsBuffer.clientPID);
     if(returnValue==0)
+    {
         sendReleaseMessage(message.operationMessage.semaphoreOperationsBuffer.clientPID);
+        printf("ASemaphore aquired\n");
+    }
+        
 }
 
 void releaseRecord()

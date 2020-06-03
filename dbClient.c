@@ -33,15 +33,22 @@ struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalary
 int dbManagerPID;
 struct record * databaseMemoryBegining;
 int numberOfRecords;
+int queryLoggerMsqQid;
+int queryLoggerPID;
 
 int main(int argc, char*argv[])
-{   int loggerSharedMemoryID = atoi(argv[7]);
+{   printf("Argv args:\n");
+for(int i=0;i<10;i++)
+    printf("%s\n",argv[i]);
+    int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
     int clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
     dbManagerPID = atoi(argv[4]);
     int databaseSharedMemory = atoi (argv[2]);
+    queryLoggerPID=atoi(argv[8]);
+    queryLoggerMsqQid=atoi(argv[9]);
     char clientStart[8]="client";
     char clientEnd[11]="endClient";
     char clientNumberChar[2];
@@ -55,11 +62,12 @@ int main(int argc, char*argv[])
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
 
-    printf("I am the client ,manager PID is %d and logger shm ID: %d, datbase shm ID: %d\n",dbManagerPID,loggerSharedMemoryID,databaseSharedMemory);
-    printf("MsgQ ID: %d\n",clientManagerMsgQ);
+    
     //attaching shared memory
     databaseMemoryBegining =shmat(databaseSharedMemory,NULL,0);//Attchment to the shared memory to the record pointer.
 
+    printf("I am the client ,databasSharedMemID: %d, dataBseMemBeg:%d\n",databaseSharedMemory,databaseMemoryBegining);
+    
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
     //Log(clientStart, loggerMsgQid, loggerPID);
