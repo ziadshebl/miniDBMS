@@ -39,7 +39,7 @@ int queryLoggerPID;
 int main(int argc, char*argv[])
 {   printf("Argv args:\n");
 for(int i=0;i<10;i++)
-    printf("%s\n",argv[i]);
+    printf("argv[%d]: %s\n",i,argv[i]);
     int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
@@ -66,7 +66,7 @@ for(int i=0;i<10;i++)
     //attaching shared memory
     databaseMemoryBegining =shmat(databaseSharedMemory,NULL,0);//Attchment to the shared memory to the record pointer.
 
-    printf("I am the client ,databasSharedMemID: %d, dataBseMemBeg:%d\n",databaseSharedMemory,databaseMemoryBegining);
+    printf("I am the client ,databasSharedMemID: %d,\n",databaseSharedMemory);
     
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);

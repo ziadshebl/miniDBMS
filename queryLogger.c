@@ -64,7 +64,7 @@ void sendReleaseMessage(int pid)
     struct operationSuccessMessageBuffer releaseMsg;
     releaseMsg.isOperationDone=1;
     releaseMsg.mtype=pid;
-    releaseMsg.numberOfRecords=0;
+    //releaseMsg.numberOfRecords=0;
     int msgStatus=msgsnd(queryLoggerMsgQid, &releaseMsg, sizeof(releaseMsg)-sizeof(long), !IPC_NOWAIT);
     if(msgStatus==-1)
         printf("ERROR! Query logger cannot send release message!\n");
