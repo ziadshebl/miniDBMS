@@ -41,16 +41,18 @@ void releaseRecord();
 //MAIN Function.
 int main(int argc, char*argv[])
 {
+    //for(int i=0;i<argc;i++)
+      //  printf("manager argv[%d]%s\n",i,argv[i]);
     loggerSharedMemoryID = atoi(argv[5]);
     loggerMsgQid = atoi(argv[3]);
     loggerPID = atoi(argv[4]);
-    printf("I am the manager and logger shared memory ID is %d\n",loggerSharedMemoryID);
+    //printf("I am the manager and logger shared memory ID is %d\n",loggerSharedMemoryID);
     ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.  
-    printf("MsgQ PID is: %d\n",ManagerClientMessageQid);  
+    //printf("MsgQ PID is: %d\n",ManagerClientMessageQid);  
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
     startOfTheSharedMemory=tuple;
-    printf("memory id is: %d,address is:%d\n",sharedMemoryId,tuple);
+    //printf("memory id is: %d,address is:%d\n",sharedMemoryId,tuple);
 
     //Intializing semaphores
     for (int index=0;index<MAX_RECORDS;index++)
@@ -64,7 +66,7 @@ int main(int argc, char*argv[])
         messageRecieveStatus=msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), IPC_NOWAIT);//Recieving a message 
         if(messageRecieveStatus>-1)
         {
-            printf("message soperation is %d \n",message.operationMessage.operationNeeded);
+            //printf("message soperation is %d \n",message.operationMessage.operationNeeded);
             if(message.operationMessage.operationNeeded==add)
             {
                 addNewRecord();//Adds a new record from the last message sent to the shared memory.
@@ -139,13 +141,13 @@ void sendReleaseMessage(int pid)
 }
 void acquireRecord()
 {
-    printf("An acquire request is recieved..... \n");
+    //printf("An acquire request is recieved..... \n");
     int reqsemaphore=message.operationMessage.semaphoreOperationsBuffer.recordKey;
     int returnValue=acquireSemaphore(&recordsSemaphores[reqsemaphore],message.operationMessage.semaphoreOperationsBuffer.clientPID);
     if(returnValue==0)
     {
         sendReleaseMessage(message.operationMessage.semaphoreOperationsBuffer.clientPID);
-        printf("ASemaphore aquired\n");
+        //printf("ASemaphore aquired\n");
     }
         
 }

@@ -1,11 +1,11 @@
 noOfClients
-1
+3
 
 client1
 Add	AbdelrahmanEmam	1000
 Add	ZiadKamal	800
 Modify	1	+200
-Modify	2	-100
+Modify	1	-100
 endClient1
 
 client2

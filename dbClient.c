@@ -37,9 +37,10 @@ int queryLoggerMsqQid;
 int queryLoggerPID;
 
 int main(int argc, char*argv[])
-{   printf("Argv args:\n");
-for(int i=0;i<10;i++)
-    printf("%s\n",argv[i]);
+{  
+    
+    //for(int i=0;i<argc;i++)
+      //  printf("client argv[%d]%s\n",i,argv[i]);
     int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
@@ -66,7 +67,7 @@ for(int i=0;i<10;i++)
     //attaching shared memory
     databaseMemoryBegining =shmat(databaseSharedMemory,NULL,0);//Attchment to the shared memory to the record pointer.
 
-    printf("I am the client ,databasSharedMemID: %d, dataBseMemBeg:%d\n",databaseSharedMemory,databaseMemoryBegining);
+    //printf("I am the client ,databasSharedMemID: %d, dataBseMemBeg:%d\n",databaseSharedMemory,databaseMemoryBegining);
     
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
@@ -261,14 +262,23 @@ for(int i=0;i<10;i++)
         struct additionSuccessMessageBuffer additionSuccessMessage;
         if(toSendMessage.operationMessage.operationNeeded==add)
         {
-            printf("Now sending add message: \n");
+            //printf("Now sending add message: \n");
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
-            printf("Message sent from child %d\n",getpid());
+            //printf("Message sent from child %d\n",getpid());
             int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
             printf("The key of the added record is %d\n", additionSuccessMessage.key);
             printf("id:%d,name:%s,salary:%d\n",databaseMemoryBegining->key,databaseMemoryBegining->name,databaseMemoryBegining->salary);
         }
-        else if(toSendMessage.operationMessage.operationNeeded==modify)
+            
+    }
+    for (int operation; operation< operationCounter; operation++)
+    {
+        struct clientManagerMsgBuffer toSendMessage;
+        int send_val;
+        toSendMessage.mtype = dbManagerPID;
+        toSendMessage.operationMessage=clientOperations[operation];
+        struct additionSuccessMessageBuffer additionSuccessMessage;
+        if(toSendMessage.operationMessage.operationNeeded==modify)
         {
             int operationSucceeded=acquireSemaphore(toSendMessage,clientManagerMsgQ);
             if(operationSucceeded)
@@ -312,12 +322,12 @@ void modifyRecord(struct clientManagerMsgBuffer toSendMessage)
     else if(toSendMessage.operationMessage.modifyBuffer.salaryOperation==decrease) 
        addressToBeModified->salary-=toSendMessage.operationMessage.modifyBuffer.value;
 
-    printf("\n");
+    //printf("\n");
     printf("The key to be edited  is: %d \n",addressToBeModified->key);
     printf("The salary  after editing is: %d \n",addressToBeModified->salary);
     printf("The name is: %s \n",addressToBeModified->name);
-    printf("Edited...\n");
-    printf("\n");
+    //printf("Edited...\n");
+    //printf("\n");
 }
 
 void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage,int clientManagerMsgQ)
