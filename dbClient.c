@@ -38,8 +38,8 @@ int queryOutputCounter;
 
 int main(int argc, char *argv[])
 {
-    for(int i=0;i<argc;i++)
-      printf("client argv[%d]%s\n",i,argv[i]);
+    // for(int i=0;i<argc;i++)
+    //   printf("client argv[%d]%s\n",i,argv[i]);
     int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
             printf("HereeFirst\n");
             int recordNumber=0;
             queryOutputCounter=0;
-            while(recordNumber<5)
+            while(startOfTheSharedMemory->key!=-1)
             {
                 if(clientOperations[operation].retrieveBuffer.nameOperation==nameNone)
                 {
@@ -260,12 +260,12 @@ int main(int argc, char *argv[])
                 {
                     if(strstr(startOfTheSharedMemory->name,clientOperations[operation].retrieveBuffer.name)!=0)
                     {
-                        printf(" Found Starts with%s\n",startOfTheSharedMemory->name);
+                        printf("Found Starts with%s\n",startOfTheSharedMemory->name);
                         addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
                     }
                 }
                 startOfTheSharedMemory+=sizeof(struct record);//Incrementing the pointer pointing to the shared memory by the size of the struct added.
-                recordNumber++;
+                //recordNumber++;
 
             }
             int queryArrayPointer=0;
