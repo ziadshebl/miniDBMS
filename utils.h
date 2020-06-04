@@ -40,7 +40,7 @@ enum salaryRetrieveOperation {
    equal,
    smallerThanOrEqual,
    biggerThanOrEqual,
-   none
+   salaryNone
 };
 
 enum retrieveOperation {
@@ -52,13 +52,19 @@ enum retrieveOperation {
    fullTable
 };
 
+enum nameRetrieveOperation {
+   fullName,
+   nameContains,
+   nameNone
+};
 struct retrieveBuffer
 {
-   long mtype;
-   char name[20];
+   int clientPID;
+   char name[NAME_LENGTH];
    int salary;
    enum retrieveOperation operation;
    enum salaryRetrieveOperation salaryOperation;
+   enum nameRetrieveOperation nameOperation;
 };
 
 enum modifySalaryOperation {

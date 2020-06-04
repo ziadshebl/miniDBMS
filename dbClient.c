@@ -1,7 +1,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-#include<sys/shm.h>
+#include <sys/shm.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,7 +12,6 @@
 #include "utils.h"
 #include "loggerFunctions.c"
 
-
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024
 #define maxOperationsNumber 100
@@ -20,419 +19,465 @@
 #define maxNameCharacters 20
 #define maxIdDigits 6
 
-
-
-int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage,int clientManagerMsgQ);
-void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage,int clientManagerMsgQ);
+int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ);
+void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ);
 void modifyRecord(struct clientManagerMsgBuffer toSendMessage);
-int searchForAWord(char*wordToBeSearched);
-void readFromALine(int lineNeeded, char*characterFound);
-struct addRecordBuffer createAddRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters]);
-struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits],enum modifySalaryOperation salaryOperation);
-
+int searchForAWord(char *wordToBeSearched);
+void readFromALine(int lineNeeded, char *characterFound);
+struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters]);
+struct modifyRecordBuffer createModifyRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits], enum modifySalaryOperation salaryOperation);
+struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], enum salaryRetrieveOperation salaryOperation, enum nameRetrieveOperation nameOperation, enum retrieveOperation operation);
+void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd);
 int dbManagerPID;
-struct record * databaseMemoryBegining;
+struct record *startOfTheSharedMemory;
 int numberOfRecords;
 int queryLoggerMsqQid;
 int queryLoggerPID;
+struct record queryOutput[1000];
+int queryOutputCounter;
 
-int main(int argc, char*argv[])
-{  
-    
-    //for(int i=0;i<argc;i++)
-      //  printf("client argv[%d]%s\n",i,argv[i]);
+int main(int argc, char *argv[])
+{
+    for(int i=0;i<argc;i++)
+      printf("client argv[%d]%s\n",i,argv[i]);
     int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
     int clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
     dbManagerPID = atoi(argv[4]);
-    int databaseSharedMemory = atoi (argv[2]);
-    queryLoggerPID=atoi(argv[8]);
-    queryLoggerMsqQid=atoi(argv[9]);
-    char clientStart[8]="client";
-    char clientEnd[11]="endClient";
+    int databaseSharedMemory = atoi(argv[2]);
+    queryLoggerPID = atoi(argv[8]);
+    queryLoggerMsqQid = atoi(argv[9]);
+    char clientStart[8] = "client";
+    char clientEnd[11] = "endClient";
     char clientNumberChar[2];
     int startingLineNumber;
     int endingLineNumber;
     char textBuffer[maxNumberOfCharToBeRead];
     struct AllOperations clientOperations[maxOperationsNumber];
-    int operationCounter=0;
-    
-    strcpy(clientNumberChar,argv[1]);
-    strcat(clientStart,clientNumberChar);
-    strcat(clientEnd,clientNumberChar);
+    int operationCounter = 0;
+ 
+    //struct record* startOfTheSharedMemory;
 
-    
+    strcpy(clientNumberChar, argv[1]);
+    strcat(clientStart, clientNumberChar);
+    strcat(clientEnd, clientNumberChar);
+
     //attaching shared memory
-    databaseMemoryBegining =shmat(databaseSharedMemory,NULL,0);//Attchment to the shared memory to the record pointer.
+    startOfTheSharedMemory = shmat(databaseSharedMemory, NULL, 0); //Attchment to the shared memory to the record pointer.
 
     //printf("I am the client ,databasSharedMemID: %d, dataBseMemBeg:%d\n",databaseSharedMemory,databaseMemoryBegining);
-    
+
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
     //Log(clientStart, loggerMsgQid, loggerPID);
-    for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
+    for (int lineCounter = startingLineNumber + 1; lineCounter < endingLineNumber; lineCounter++)
     {
-        readFromALine(lineCounter,textBuffer);
+        readFromALine(lineCounter, textBuffer);
         char empName[maxNameCharacters];
         char empSalaryChar[maxSalaryDigits];
         char empIdChar[maxIdDigits];
         char salaryIncreaseOrDecrease;
         int empSalary;
         int empId;
-        if(sscanf(textBuffer,"Add  %s   %s",empName, empSalaryChar)!=0)
+        if (sscanf(textBuffer, "Add  %s   %s", empName, empSalaryChar) != 0)
         {
-            struct addRecordBuffer toAddBuffer = createAddRecordBuffer (empSalaryChar, empName);
-            clientOperations[operationCounter].addBuffer=toAddBuffer;
+            struct addRecordBuffer toAddBuffer = createAddRecordBuffer(empSalaryChar, empName);
+            clientOperations[operationCounter].addBuffer = toAddBuffer;
             clientOperations[operationCounter].operationNeeded = add;
             operationCounter++;
-
         }
-        else if(sscanf(textBuffer,"Modify  %s  %c%s",empIdChar,&salaryIncreaseOrDecrease ,empSalaryChar)!=0)
+        else if (sscanf(textBuffer, "Modify  %s  %c%s", empIdChar, &salaryIncreaseOrDecrease, empSalaryChar) != 0)
         {
             struct modifyRecordBuffer toModifyBuffer;
-            if(salaryIncreaseOrDecrease=='+')
+            if (salaryIncreaseOrDecrease == '+')
             {
-                 toModifyBuffer = createModifyRecordBuffer (empSalaryChar, empName, empIdChar,increase);
-                 
+                toModifyBuffer = createModifyRecordBuffer(empSalaryChar, empName, empIdChar, increase);
             }
-            else 
+            else
             {
-                 toModifyBuffer = createModifyRecordBuffer (empSalaryChar, empName, empIdChar,decrease);
-                
+                toModifyBuffer = createModifyRecordBuffer(empSalaryChar, empName, empIdChar, decrease);
             }
-            clientOperations[operationCounter].modifyBuffer=toModifyBuffer;
+            clientOperations[operationCounter].modifyBuffer = toModifyBuffer;
             clientOperations[operationCounter].operationNeeded = modify;
             operationCounter++;
         }
-        else if(sscanf(textBuffer,"Retrieve Name:   %s  Salary: %s",empName, empSalaryChar)!=0)
+        else if((sscanf(textBuffer,"Retrieve Name:   %s  Salary: %s",empName, empSalaryChar)!=0) || (sscanf(textBuffer,"Retrieve NameStarts:   %s  Salary: %s",empName, empSalaryChar)!=0))
         {
-            if(empSalaryChar[0]=='<' && empSalaryChar[1]!='=')
+            struct retrieveBuffer toRetrieveBuffer;
+            enum nameRetrieveOperation nameOperation;
+            enum retrieveOperation retrievalOperation;
+            if (sscanf(textBuffer, "Retrieve Name:   %s  Salary: %s", empName, empSalaryChar) != 0)
             {
-                struct retrieveBuffer toRetrieveBuffer;
-                char empSalaryCharWithoutOperator[7];
-                for (int character=0; character<7; character++){
-                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
-                } 
-                empSalary = atoi(empSalaryCharWithoutOperator);
-                strcpy(toRetrieveBuffer.name, empName);
-                toRetrieveBuffer.salaryOperation=smallerThan;
-                toRetrieveBuffer.salary=empSalary;
-                if(strcmp(empName, "Any")==0)
+                if (strcmp(empName, "Any") == 0)
                 {
-                    toRetrieveBuffer.operation=salaryOnly;
-                    
+                    nameOperation = nameNone;
+                    retrievalOperation = nameAndSalary;
                 }
                 else
                 {
-                    toRetrieveBuffer.operation=nameAndSalary;
+                    printf("I am inside\n");
+                    nameOperation = fullName;
+                    retrievalOperation = salaryOnly;
                 }
-                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
-                operationCounter++;
-                
-               
             }
-            else if(empSalaryChar[0]=='>' && empSalaryChar[1]!='=')
+            else if (sscanf(textBuffer, "Retrieve NameStarts:   %s  Salary: %s", empName, empSalaryChar) != 0)
             {
-                struct retrieveBuffer toRetrieveBuffer;
-                char empSalaryCharWithoutOperator[7];
-                for (int character=0; character<7; character++){
-                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
-                }
-                empSalary = atoi(empSalaryCharWithoutOperator);
-                strcpy(toRetrieveBuffer.name, empName);
-                toRetrieveBuffer.salaryOperation=biggerThan;
-                toRetrieveBuffer.salary=empSalary;
-                if(strcmp(empName, "Any")==0)
+                if (strcmp(empName, "Any") == 0)
                 {
-                    toRetrieveBuffer.operation=salaryOnly;
+                    nameOperation = nameNone;
+                    retrievalOperation = nameAndSalary;
                 }
                 else
                 {
-                    toRetrieveBuffer.operation=nameAndSalary;
+                    nameOperation = nameContains;
+                    retrievalOperation = salaryOnly;
                 }
-                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
-                operationCounter++;
-                
             }
-            else if(empSalaryChar[0]=='=')
+            if (empSalaryChar[0] == '<' && empSalaryChar[1] != '=')
             {
-                struct retrieveBuffer toRetrieveBuffer;
+
                 char empSalaryCharWithoutOperator[7];
-                for (int character=0; character<7; character++){
-                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+1];
-                }
-                empSalary = atoi(empSalaryCharWithoutOperator);
-                strcpy(toRetrieveBuffer.name, empName);
-                toRetrieveBuffer.salaryOperation=equal;
-                toRetrieveBuffer.salary=empSalary;
-                if(strcmp(empName, "Any")==0)
+                for (int character = 0; character < 7; character++)
                 {
-                    toRetrieveBuffer.operation=salaryOnly;
-                   
+                    empSalaryCharWithoutOperator[character] = empSalaryChar[character + 1];
                 }
-                else
-                {
-                    toRetrieveBuffer.operation=nameAndSalary;
-               
-                }
-                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
-                operationCounter++;
-                
-                
+
+                toRetrieveBuffer = createRetrievalRecordBuffer(empSalaryCharWithoutOperator, empName, smallerThan, nameOperation, retrievalOperation);
             }
-            else if(empSalaryChar[0]=='>' && empSalaryChar[1]=='=')
+            else if (empSalaryChar[0] == '>' && empSalaryChar[1] != '=')
             {
-                struct retrieveBuffer toRetrieveBuffer;
+                char empSalaryCharWithoutOperator[7];
+                for (int character = 0; character < 7; character++)
+                {
+                    empSalaryCharWithoutOperator[character] = empSalaryChar[character + 1];
+                }
+
+                toRetrieveBuffer = createRetrievalRecordBuffer(empSalaryCharWithoutOperator, empName, biggerThan, nameOperation, retrievalOperation);
+            }
+            else if (empSalaryChar[0] == '=')
+            {
+
+                char empSalaryCharWithoutOperator[7];
+                for (int character = 0; character < 7; character++)
+                {
+                    empSalaryCharWithoutOperator[character] = empSalaryChar[character + 1];
+                }
+
+                toRetrieveBuffer = createRetrievalRecordBuffer(empSalaryCharWithoutOperator, empName, equal, nameOperation, retrievalOperation);
+            }
+            else if (empSalaryChar[0] == '>' && empSalaryChar[1] == '=')
+            {
+
                 char empSalaryCharWithoutOperator[6];
-                for (int character=0; character<7; character++){
-                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+2];
-                }
-                empSalary = atoi(empSalaryCharWithoutOperator);
-                strcpy(toRetrieveBuffer.name, empName);
-                toRetrieveBuffer.salaryOperation=biggerThanOrEqual;
-                toRetrieveBuffer.salary=empSalary;
-                if(strcmp(empName, "Any")==0)
+                for (int character = 0; character < 7; character++)
                 {
-                    toRetrieveBuffer.operation=salaryOnly;
-                    
+                    empSalaryCharWithoutOperator[character] = empSalaryChar[character + 2];
                 }
-                else
-                {
-                    toRetrieveBuffer.operation=nameAndSalary;
-     
-                }
-                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
-                operationCounter++;
-                
-                
-            }
-            else if(empSalaryChar[0]=='<' && empSalaryChar[1]=='=')
-            {
 
-                struct retrieveBuffer toRetrieveBuffer;
+                toRetrieveBuffer = createRetrievalRecordBuffer(empSalaryCharWithoutOperator, empName, biggerThanOrEqual, nameOperation, retrievalOperation);
+            }
+            else if (empSalaryChar[0] == '<' && empSalaryChar[1] == '=')
+            {
                 char empSalaryCharWithoutOperator[6];
-                for (int character=0; character<7; character++){
-                    empSalaryCharWithoutOperator[character]=empSalaryChar[character+2];
-                }
-                empSalary = atoi(empSalaryCharWithoutOperator);
-                strcpy(toRetrieveBuffer.name, empName);
-                toRetrieveBuffer.salaryOperation=smallerThanOrEqual;
-                toRetrieveBuffer.salary=empSalary;
-                if(strcmp(empName, "Any")==0)
+                for (int character = 0; character < 7; character++)
                 {
-                    toRetrieveBuffer.operation=salaryOnly;
-                    
+                    empSalaryCharWithoutOperator[character] = empSalaryChar[character + 2];
                 }
-                else
-                {
-                    toRetrieveBuffer.operation=nameAndSalary;
-                  
-                }
-                clientOperations[operationCounter].retrieveBuffer=toRetrieveBuffer;
-                operationCounter++;
-                
+
+                toRetrieveBuffer = createRetrievalRecordBuffer(empSalaryCharWithoutOperator, empName, smallerThanOrEqual, nameOperation, retrievalOperation);
             }
-            else if(strcmp(empName, "Any")==0)
+            else
             {
-                struct retrieveBuffer toRetrieveBuffer;
-                toRetrieveBuffer.salaryOperation=none;
-                if(empName=="Any")
-                {
-                    toRetrieveBuffer.operation=fullTable;
-                }
+                toRetrieveBuffer = createRetrievalRecordBuffer("None", empName, salaryNone, nameOperation, fullTable);
             }
-
-        }
-        else if(sscanf(textBuffer,"Retrieve NameStarts:   %s  Salary: %s",empName, empSalaryChar)!=0)
-        {
-     
-
+            clientOperations[operationCounter].retrieveBuffer = toRetrieveBuffer;
+            clientOperations[operationCounter].operationNeeded = retrieve;
+            operationCounter++;   
         }
     }
 
-
-    for (int operation; operation< operationCounter; operation++)
+    for (int operation=0; operation < operationCounter; operation++)
     {
         struct clientManagerMsgBuffer toSendMessage;
         int send_val;
         toSendMessage.mtype = dbManagerPID;
-        toSendMessage.operationMessage=clientOperations[operation];
+        toSendMessage.operationMessage = clientOperations[operation];
         struct additionSuccessMessageBuffer additionSuccessMessage;
-        if(toSendMessage.operationMessage.operationNeeded==add)
+        if (toSendMessage.operationMessage.operationNeeded == add)
         {
             //printf("Now sending add message: \n");
             send_val = msgsnd(clientManagerMsgQ, &toSendMessage, sizeof(toSendMessage.operationMessage), !IPC_NOWAIT);
             //printf("Message sent from child %d\n",getpid());
-            int messageRecieveStatus =msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
-            printf("The key of the added record is %d\n", additionSuccessMessage.key);
-            printf("id:%d,name:%s,salary:%d\n",databaseMemoryBegining->key,databaseMemoryBegining->name,databaseMemoryBegining->salary);
+            int messageRecieveStatus = msgrcv(clientManagerMsgQ, &additionSuccessMessage, sizeof(additionSuccessMessage.key), getpid(), !IPC_NOWAIT);
+            //printf("The key of the added record is %d\n", additionSuccessMessage.key);
+            //printf("id:%d,name:%s,salary:%d\n", startOfTheSharedMemory->key, startOfTheSharedMemory->name, startOfTheSharedMemory->salary);
         }
-            
     }
-    for (int operation; operation< operationCounter; operation++)
+    for (int operation =0; operation < operationCounter; operation++)
     {
         struct clientManagerMsgBuffer toSendMessage;
         int send_val;
         toSendMessage.mtype = dbManagerPID;
-        toSendMessage.operationMessage=clientOperations[operation];
+        toSendMessage.operationMessage = clientOperations[operation];
         struct additionSuccessMessageBuffer additionSuccessMessage;
-        if(toSendMessage.operationMessage.operationNeeded==modify)
+        if (toSendMessage.operationMessage.operationNeeded == modify)
         {
-            int operationSucceeded=acquireSemaphore(toSendMessage,clientManagerMsgQ);
-            if(operationSucceeded)
+            int operationSucceeded = acquireSemaphore(toSendMessage, clientManagerMsgQ);
+            if (operationSucceeded)
             {
                 modifyRecord(toSendMessage);
-                releaseSemaphore(toSendMessage,clientManagerMsgQ);
+                releaseSemaphore(toSendMessage, clientManagerMsgQ);
             }
         }
-            
     }
 
+    
+    for (int operation=0; operation < operationCounter; operation++)
+    {
+        if(clientOperations[operation].operationNeeded==retrieve)
+        {
+
+            printf("HereeFirst\n");
+            int recordNumber=0;
+            queryOutputCounter=0;
+            while(recordNumber<5)
+            {
+                if(clientOperations[operation].retrieveBuffer.nameOperation==nameNone)
+                {
+                    printf("Checking name\n");
+                    addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
+                }
+                else if(clientOperations[operation].retrieveBuffer.nameOperation==fullName)
+                {
+                    if(strcmp(clientOperations[operation].retrieveBuffer.name,startOfTheSharedMemory->name)==0)
+                    {
+                         addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
+                    }
+                }
+                else if(clientOperations[operation].retrieveBuffer.nameOperation==nameContains)
+                {
+                    if(strstr(startOfTheSharedMemory->name,clientOperations[operation].retrieveBuffer.name)!=0)
+                    {
+                        printf(" Found Starts with%s\n",startOfTheSharedMemory->name);
+                        addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
+                    }
+                }
+                startOfTheSharedMemory+=sizeof(struct record);//Incrementing the pointer pointing to the shared memory by the size of the struct added.
+                recordNumber++;
+
+            }
+            int queryArrayPointer=0;
+            while(queryArrayPointer<queryOutputCounter)
+            {
+                if(clientOperations[operation].retrieveBuffer.salaryOperation==salaryNone)
+                {
+                    printf("Checking salary\n");
+                }
+                else if(clientOperations[operation].retrieveBuffer.salaryOperation==equal)
+                {
+                    printf("Checking Salary =\n");
+                    if(queryOutput[queryArrayPointer].salary!=clientOperations[operation].retrieveBuffer.salary)
+                    {
+                        queryOutput[queryArrayPointer].key=-1;
+                    }
+                }
+                else if(clientOperations[operation].retrieveBuffer.salaryOperation==smallerThan)
+                {
+                    if(queryOutput[queryArrayPointer].salary>=clientOperations[operation].retrieveBuffer.salary)
+                    {
+                        queryOutput[queryArrayPointer].key=-1;
+                    }
+                }
+                else if(clientOperations[operation].retrieveBuffer.salaryOperation==biggerThan)
+                {
+                    if(queryOutput[queryArrayPointer].salary<=clientOperations[operation].retrieveBuffer.salary)
+                    {
+                        queryOutput[queryArrayPointer].key=-1;
+                    }
+                }
+                else if(clientOperations[operation].retrieveBuffer.salaryOperation==smallerThanOrEqual)
+                {
+                    if(queryOutput[queryArrayPointer].salary>clientOperations[operation].retrieveBuffer.salary)
+                    {
+                        queryOutput[queryArrayPointer].key=-1;
+                    }
+                }
+                else if(clientOperations[operation].retrieveBuffer.salaryOperation==biggerThanOrEqual)
+                {
+                    if(queryOutput[queryArrayPointer].salary<clientOperations[operation].retrieveBuffer.salary)
+                    {
+                        queryOutput[queryArrayPointer].key=-1;
+                    }
+                }
+                queryArrayPointer++;
+            }
+            for(int recordCounter=0; recordCounter<queryArrayPointer; recordCounter++)
+            {
+                if(queryOutput[recordCounter].key!=-1)
+                    printf("RECORD RETRIEVED KEY %d NAME %s Salary %d\n", queryOutput[recordCounter].key,queryOutput[recordCounter].name,queryOutput[recordCounter].salary);
+            }
+        }
+    }
 }
 
-int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage,int clientManagerMsgQ)
+void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd)
+{
+    struct record toAdd;
+    toAdd.key=keyToAdd;
+    strcpy(toAdd.name,empNameToAdd);
+    toAdd.salary=salaryToAdd;
+    queryOutput[queryOutputCounter]=toAdd;
+    queryOutputCounter++;
+}
+
+int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
 {
     struct semaphoreOperationsBuffer acquireBuffer;
     struct clientManagerMsgBuffer toAcquireMessage;
     struct operationSuccessMessageBuffer operationSuccessMessage;
     //acquiring semaphore
     acquireBuffer.recordKey = toSendMessage.operationMessage.modifyBuffer.recordKey;
-    acquireBuffer.clientPID=getpid();
-    toAcquireMessage.operationMessage.semaphoreOperationsBuffer=acquireBuffer;
-    toAcquireMessage.mtype=dbManagerPID;
-    toAcquireMessage.operationMessage.operationNeeded=acquire;
+    acquireBuffer.clientPID = getpid();
+    toAcquireMessage.operationMessage.semaphoreOperationsBuffer = acquireBuffer;
+    toAcquireMessage.mtype = dbManagerPID;
+    toAcquireMessage.operationMessage.operationNeeded = acquire;
     int send_val = msgsnd(clientManagerMsgQ, &toAcquireMessage, sizeof(toAcquireMessage.operationMessage), !IPC_NOWAIT);
-           
-    //waiting for sempahore 
-    if(send_val > -1){
-    //printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
+
+    //waiting for sempahore
+    if (send_val > -1)
+    {
+        //printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
     }
-    int messageRecieveStatus =msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
+    int messageRecieveStatus = msgrcv(clientManagerMsgQ, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);
     return operationSuccessMessage.isOperationDone;
 }
 
 void modifyRecord(struct clientManagerMsgBuffer toSendMessage)
 {
-    struct record *addressToBeModified=databaseMemoryBegining+( toSendMessage.operationMessage.modifyBuffer.recordKey * sizeof(struct record));
-    if(toSendMessage.operationMessage.modifyBuffer.salaryOperation==increase) 
-        addressToBeModified->salary+=toSendMessage.operationMessage.modifyBuffer.value;
+    struct record *addressToBeModified = startOfTheSharedMemory + (toSendMessage.operationMessage.modifyBuffer.recordKey * sizeof(struct record));
+    if (toSendMessage.operationMessage.modifyBuffer.salaryOperation == increase)
+        addressToBeModified->salary += toSendMessage.operationMessage.modifyBuffer.value;
 
-    else if(toSendMessage.operationMessage.modifyBuffer.salaryOperation==decrease) 
-       addressToBeModified->salary-=toSendMessage.operationMessage.modifyBuffer.value;
+    else if (toSendMessage.operationMessage.modifyBuffer.salaryOperation == decrease)
+        addressToBeModified->salary -= toSendMessage.operationMessage.modifyBuffer.value;
 
     //printf("\n");
-    printf("The key to be edited  is: %d \n",addressToBeModified->key);
-    printf("The salary  after editing is: %d \n",addressToBeModified->salary);
-    printf("The name is: %s \n",addressToBeModified->name);
+    //printf("The key to be edited  is: %d \n", addressToBeModified->key);
+    //printf("The salary  after editing is: %d \n", addressToBeModified->salary);
+    //printf("The name is: %s \n", addressToBeModified->name);
     //printf("Edited...\n");
     //printf("\n");
 }
 
-void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage,int clientManagerMsgQ)
+void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
 {
     struct semaphoreOperationsBuffer releaseBuffer;
     struct clientManagerMsgBuffer toReleaseMessage;
 
     //acquiring semaphore
     releaseBuffer.recordKey = toSendMessage.operationMessage.modifyBuffer.recordKey;
-    releaseBuffer.clientPID=getpid();
-    toReleaseMessage.operationMessage.semaphoreOperationsBuffer=releaseBuffer;
-    toReleaseMessage.mtype=dbManagerPID;
-    toReleaseMessage.operationMessage.operationNeeded=release;
+    releaseBuffer.clientPID = getpid();
+    toReleaseMessage.operationMessage.semaphoreOperationsBuffer = releaseBuffer;
+    toReleaseMessage.mtype = dbManagerPID;
+    toReleaseMessage.operationMessage.operationNeeded = release;
     int send_val = msgsnd(clientManagerMsgQ, &toReleaseMessage, sizeof(toReleaseMessage.operationMessage), !IPC_NOWAIT);
 
-    //waiting for sempahore 
-    if(send_val > -1){
-    //printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
+    //waiting for sempahore
+    if (send_val > -1)
+    {
+        //printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
     }
 }
 
-int searchForAWord(char*wordToBeSearched)
+int searchForAWord(char *wordToBeSearched)
 {
-    FILE * configurationFile=fopen(configfileName, "r");
-    int lineNumber=1;
+    FILE *configurationFile = fopen(configfileName, "r");
+    int lineNumber = 1;
     int findedResult;
-    char charactersInFile [maxNumberOfCharToBeRead];
+    char charactersInFile[maxNumberOfCharToBeRead];
 
-
-    if(configurationFile==NULL)
+    if (configurationFile == NULL)
     {
 
         printf("File can't be opened\n");
-
     }
     else
     {
-        while(fgets(charactersInFile, maxNumberOfCharToBeRead, configurationFile)!=NULL)
+        while (fgets(charactersInFile, maxNumberOfCharToBeRead, configurationFile) != NULL)
         {
-            if(strstr(charactersInFile, wordToBeSearched)!=NULL)
+            if (strstr(charactersInFile, wordToBeSearched) != NULL)
             {
                 return lineNumber;
             }
-            lineNumber=lineNumber+1;
+            lineNumber = lineNumber + 1;
         }
     }
-    
-
 }
 
-void readFromALine(int lineNeeded, char*characterFound)
+void readFromALine(int lineNeeded, char *characterFound)
 {
-    FILE * configurationFile=fopen(configfileName, "r");
-    int lineNumber=1;
+    FILE *configurationFile = fopen(configfileName, "r");
+    int lineNumber = 1;
     int findedResult;
-    char charactersInFile [maxNumberOfCharToBeRead];
+    char charactersInFile[maxNumberOfCharToBeRead];
 
-
-    if(configurationFile==NULL)
+    if (configurationFile == NULL)
     {
 
         printf("Configuration file can't be opened\n");
-
     }
     else
     {
-        while(fgets(charactersInFile, maxNumberOfCharToBeRead, configurationFile)!=NULL)
+        while (fgets(charactersInFile, maxNumberOfCharToBeRead, configurationFile) != NULL)
         {
-            if(lineNumber==lineNeeded)
+            if (lineNumber == lineNeeded)
             {
-                for(int characterPlace=0; characterPlace < maxNumberOfCharToBeRead; characterPlace++)
+                for (int characterPlace = 0; characterPlace < maxNumberOfCharToBeRead; characterPlace++)
                 {
                     characterFound[characterPlace] = charactersInFile[characterPlace];
                 }
             }
-            lineNumber=lineNumber+1;
+            lineNumber = lineNumber + 1;
         }
     }
-
 }
 
-
-struct addRecordBuffer createAddRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters])
+struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters])
 {
     struct addRecordBuffer toAddBuffer;
-    int empSalary=atoi(empSalaryChar);      
-    strcpy(toAddBuffer.name,empName);
-    toAddBuffer.salary=empSalary;
-    toAddBuffer.clientPID=getpid();
+    int empSalary = atoi(empSalaryChar);
+    strcpy(toAddBuffer.name, empName);
+    toAddBuffer.salary = empSalary;
+    toAddBuffer.clientPID = getpid();
 
     return toAddBuffer;
-
 }
 
-
-struct modifyRecordBuffer createModifyRecordBuffer (char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits],enum modifySalaryOperation salaryOperation)
+struct modifyRecordBuffer createModifyRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits], enum modifySalaryOperation salaryOperation)
 {
     struct modifyRecordBuffer toModifyBuffer;
-    int empSalary=atoi(empSalaryChar);
-    int empId=atoi(empIdChar);
+    int empSalary = atoi(empSalaryChar);
+    int empId = atoi(empIdChar);
 
-
-    toModifyBuffer.recordKey=empId;
-    toModifyBuffer.salaryOperation=salaryOperation;
-    toModifyBuffer.value=empSalary;
-    toModifyBuffer.clientPID=getpid();
+    toModifyBuffer.recordKey = empId;
+    toModifyBuffer.salaryOperation = salaryOperation;
+    toModifyBuffer.value = empSalary;
+    toModifyBuffer.clientPID = getpid();
     return toModifyBuffer;
+}
+
+struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], enum salaryRetrieveOperation salaryOperation, enum nameRetrieveOperation nameOperation, enum retrieveOperation operation)
+{
+    struct retrieveBuffer toRetrieveBuffer;
+    int empSalary = atoi(empSalaryChar);
+
+    strcpy(toRetrieveBuffer.name, empName);
+    toRetrieveBuffer.operation = operation;
+    toRetrieveBuffer.salary = empSalary;
+    toRetrieveBuffer.salaryOperation = salaryOperation;
+    toRetrieveBuffer.nameOperation = nameOperation;
+    toRetrieveBuffer.clientPID = getpid();
+    return toRetrieveBuffer;
 }

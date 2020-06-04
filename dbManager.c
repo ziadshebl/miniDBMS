@@ -41,8 +41,8 @@ void releaseRecord();
 //MAIN Function.
 int main(int argc, char*argv[])
 {
-    //for(int i=0;i<argc;i++)
-      //  printf("manager argv[%d]%s\n",i,argv[i]);
+    for(int i=0;i<argc;i++)
+        printf("manager argv[%d]%s\n",i,argv[i]);
     loggerSharedMemoryID = atoi(argv[5]);
     loggerMsgQid = atoi(argv[3]);
     loggerPID = atoi(argv[4]);
@@ -99,11 +99,11 @@ void addNewRecord()
     strcpy(tuple->name,message.operationMessage.addBuffer.name);
 
 
-    printf("............................................................... \n");
-    printf("The key  is: %d \n",tuple->key);
-    printf("The salary is: %d \n",tuple->salary);
-    printf("The name is: %s \n",tuple->name);
-    printf("............................................................... \n");
+    //printf("............................................................... \n");
+    //printf("The key  is: %d \n",tuple->key);
+    //printf("The salary is: %d \n",tuple->salary);
+    //printf("The name is: %s \n",tuple->name);
+    //printf("............................................................... \n");
 
     
 
@@ -113,7 +113,7 @@ void addNewRecord()
 
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onAdditionSuccess, sizeof(onAdditionSuccess.key), !IPC_NOWAIT);//Sending a message to the dbmanager with the key of the tuple added.
     if(messageSentStatus>-1){
-        //printf("Addition Message sent successfully... \n");
+        printf("Addition Message sent successfully... \n");
     }
     else{
         //printf("Error in sending... \n");

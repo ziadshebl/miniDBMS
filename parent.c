@@ -66,6 +66,7 @@ int main(){
     //printf("The Shared memory Id is: %d \n",databaseSharedMemory);
     sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory); 
     //printf("data base shared mem id in string is %s\n",databaseSharedMemoryChar);
+    fflush(NULL);
 
     loggerSharedMemory = shmget(KEY2, sizeOfMessageBuffer, 0644| IPC_CREAT );
     //printf("The logger shared memory ID is: %d\n",loggerSharedMemory);
