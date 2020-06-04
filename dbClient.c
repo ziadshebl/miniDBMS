@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
     //attaching shared memory
     startOfTheSharedMemory = shmat(databaseSharedMemory, NULL, 0); //Attchment to the shared memory to the record pointer.
 
-    //printf("I am the client ,databasSharedMemID: %d, dataBseMemBeg:%d\n",databaseSharedMemory,databaseMemoryBegining);
 
+    printf("I am the client ,databasSharedMemID: %d,\n",databaseSharedMemory);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
     //Log(clientStart, loggerMsgQid, loggerPID);
