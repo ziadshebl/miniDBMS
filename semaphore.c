@@ -51,7 +51,8 @@ int acquireSemaphore(struct semaphore *_semaphore,int pid)
     if(oldVal<= 0)
     {
         enqueue(&(_semaphore->sleepingProcesses),pid);
-        kill(pid,SIGSTOP);
+
+        if(pid != -1)kill(pid,SIGSTOP);
        
         return -1;
     }
@@ -69,7 +70,7 @@ int releaseSemaphore(struct semaphore *_semaphore)
     if(oldVal < 0)
     {
         int processToWake=dequeue(&(_semaphore->sleepingProcesses));
-        kill(processToWake,SIGCONT);
+       if(processToWake != -1) kill(processToWake,SIGCONT);
         return processToWake;
     }
     //no waiting process

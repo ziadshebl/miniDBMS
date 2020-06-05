@@ -49,7 +49,8 @@ int main(int argc, char*argv[])
     strcat(clientEnd,clientNumberChar);
 
     printf("I am the client and logger shared memory ID is %d\n",loggerSharedMemoryID);
-
+    printf("I am the client and logger msgqid ID is %d\n",loggerMsgQid);
+    printf("I am the client and logger ID is %d\n",loggerPID);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
     

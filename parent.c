@@ -30,12 +30,12 @@ void readFromALine(int lineNeeded, char*characterFound);
 //MAIN Function.
 int main(){
     char numberOfClientsCharacter[maxNumberOfCharToBeRead];
-    char databaseSharedMemoryChar[10];
-    char clientManagerMsgQidChar[10];
-    char loggerMsgQidChar[10];
-    char dbManagerPIDChar[5];
-    char loggerPIDChar[5];
-    char loggerSharedMemoryChar[10];
+    char databaseSharedMemoryChar[20];
+    char clientManagerMsgQidChar[20];
+    char loggerMsgQidChar[20];
+    char dbManagerPIDChar[20];
+    char loggerPIDChar[20];
+    char loggerSharedMemoryChar[20];
     int numberOfClients;
     int lineNumber;
     int totalNumberOfChildren;
@@ -124,6 +124,7 @@ int main(){
         }
     }
 
+kill(SIGSTOP,-1);
 
      for (int childNumber=0; childNumber<totalNumberOfChildren; childNumber++){
             int stat_loc;

@@ -101,9 +101,10 @@ void Log(char* SentLogMessage, int MsgQid, int LoggerPID, int loggerSharedMemory
     struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
     strcpy(MemoryAddress->Msg,SentLogMessage);
     MemoryAddress->senderPID = getpid();
-    printf("this is process %d and written in memory is: %d\n",getpid() ,MemoryAddress->senderPID);
+    printf("this is process %d and written in memory is: %s\n",getpid() ,MemoryAddress->Msg);
 
     SendMessageToReleaseSemaphore(MsgQid,LoggerPID, LOCK);
     SendMessageToReleaseSemaphore(MsgQid,LoggerPID, FULL);
+    RecieveMessage(MsgQid);
     shmdt(MemoryAddress);
 }
