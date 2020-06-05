@@ -133,7 +133,18 @@ struct queryLoggerMsgBuffer
     enum operation neededoperation;
     int senderPID;
 };
+struct msgbuff
+{
+    long mtype;
+    int SemaphoreStat;  
+    int SenderPID;
+    int SemaphoreType;
+};
 
+struct loggerMsg{
+   char Msg[100];
+   int senderPID;
+};
 ///////////////////////////////////////////////////////////////////////////////
 //Function declerations
 void dumbMemory(struct record* memoryStartAddress,int numberOfEntries);

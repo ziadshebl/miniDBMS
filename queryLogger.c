@@ -14,6 +14,7 @@
 void acquireQueryFileSemaphore(struct queryLoggerMsgBuffer message);
 void releaseQueryFileSemaphore(struct queryLoggerMsgBuffer message);
 void sendReleaseMessage(int pid);
+void queryLog(struct record queryOutput[1000],struct retrieveBuffer Info);
 
 struct semaphore queryFileSemaphore;
 int queryLoggerMsgQid;
@@ -70,4 +71,8 @@ void sendReleaseMessage(int pid)
     int msgStatus=msgsnd(queryLoggerMsgQid, &releaseMsg, sizeof(releaseMsg)-sizeof(long), !IPC_NOWAIT);
     if(msgStatus==-1)
         printf("ERROR! Query logger cannot send release message!\n");
+}
+void queryLog(struct record queryOutput[1000],struct retrieveBuffer Info){
+
+
 }
