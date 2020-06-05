@@ -34,6 +34,10 @@ int loggerMsgQid;
 int loggerPID;
 int loggerSharedMemoryID;
 
+
+char loggingMessage[200];
+char templateForSalaryAndKeyLogged[20];
+
 void addNewRecord();
 void acquireRecord();
 //void modifyRecord();
@@ -42,6 +46,7 @@ void releaseRecord();
 //MAIN Function.
 int main(int argc, char*argv[])
 {
+ 
     // for(int i=0;i<argc;i++)
     //     printf("manager argv[%d]%s\n",i,argv[i]);
     loggerSharedMemoryID = atoi(argv[5]);
@@ -82,12 +87,6 @@ int main(int argc, char*argv[])
             {
                 acquireRecord();//Aquire a record from the last message sent to the shared memory.
             }
-            /*
-            else if(message.operationMessage.operationNeeded==modify)
-            {
-                modifyRecord();
-            }
-            */
             else if(message.operationMessage.operationNeeded==release)
             {
                 releaseRecord();
@@ -111,13 +110,33 @@ void addNewRecord()
     strcpy(tupleNext->name,"");
 
 
-    printf("............................................................... \n");
-    printf("The key  is: %d \n",tuple->key);
-    printf("The salary is: %d \n",tuple->salary);
-    printf("The name is: %s \n",tuple->name);
-    printf("............................................................... \n");
-    printf("\n");
+    // printf("............................................................... \n");
+    // printf("The key  is: %d \n",tuple->key);
+    // printf("The salary is: %d \n",tuple->salary);
+    // printf("The name is: %s \n",tuple->name);
+    // printf("............................................................... \n");
+    // printf("\n");
+
+    printf("Bda2t \n");
+    strcat(loggingMessage,"The manager added a record with a key of: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",tuple->key);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," and with name of: ");
+    strcat(loggingMessage,tuple->name);
+
+    strcat(loggingMessage," and with a salary of: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",tuple->salary);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    strcat(loggingMessage,"\n");
     
+
+    printf(loggingMessage,"%s");
+    strcpy(loggingMessage,"");
+
+
+
+
 
     //Adding data to message to be sent on addition success.
     onAdditionSuccess.mtype=message.operationMessage.addBuffer.clientPID;
@@ -173,3 +192,4 @@ void releaseRecord()
     if(awakenedProcess!=0)
         sendReleaseMessage(awakenedProcess);
 }   
+
