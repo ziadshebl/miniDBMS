@@ -92,8 +92,12 @@ int main(){
     {
         loggerPID = pid;
         sprintf(loggerPIDChar,"%d",loggerPID);
+<<<<<<< HEAD
+        //printf("The Logger ID is: %d \n", pid);
+=======
         printf("The Logger ID is: %d, logger d in string: %s \n", pid,loggerPIDChar);
 
+>>>>>>> 44548ae911df1b635cf71b650b4f91e1d57c1e66
     }
 
     //Forking QueryLogger
