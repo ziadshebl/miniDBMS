@@ -35,7 +35,7 @@ int loggerSharedMemoryID;
 
 void addNewRecord();
 void acquireRecord();
-void modifyRecord();
+//void modifyRecord();
 void releaseRecord();
 
 //MAIN Function.
@@ -48,6 +48,7 @@ int main(int argc, char*argv[])
     ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.    
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
+    struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
     startOfTheSharedMemory=tuple;
     printf("memory id is: %d,address is:%d",sharedMemoryId,tuple);
 
@@ -72,10 +73,7 @@ int main(int argc, char*argv[])
             {
                 acquireRecord();//Aquire a record from the last message sent to the shared memory.
             }
-            else if(message.operationMessage.operationNeeded==modify)
-            {
-                modifyRecord();
-            }
+           
             else if(message.operationMessage.operationNeeded==release)
             {
                 releaseRecord();

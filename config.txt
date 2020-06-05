@@ -1,5 +1,5 @@
 noOfClients
-3
+5
 
 client1
 Add	AbdelrahmanEmam	1000
@@ -18,3 +18,15 @@ Add	NadaKhaled	5000
 Modify	2	-50
 Modify	2	-50
 endClient3
+
+client4
+Add	KhaledMohamed	5000
+Modify	2	-50
+Modify	2	-50
+endClient4
+
+client5
+Add	MostafaAssem	5000
+Modify	2	-50
+Modify	2	-50
+endClient5

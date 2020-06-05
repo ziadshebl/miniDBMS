@@ -1,3 +1,4 @@
+
 #include"semaphore.h"
 //Queue functions
 void enqueue(struct queue * _queue,int processID)
@@ -64,11 +65,10 @@ int releaseSemaphore(struct semaphore *_semaphore)
     printf("value before add:%d\n",oldVal);
     printf("value after add %d\n",_semaphore->semaphoreValue);
     //waiting process i queue
-    //todo::
-    if(oldVal<0)
+    if(oldVal < 0)
     {
         int processToWake=dequeue(&(_semaphore->sleepingProcesses));
-        //kill(processToWake,SIGCONT);
+       if(processToWake != -1) kill(processToWake,SIGCONT);
         return processToWake;
     }
     //no waiting process

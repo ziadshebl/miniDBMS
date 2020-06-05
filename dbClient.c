@@ -9,7 +9,6 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <time.h>
-#include "msgbuffers.h"
 #include "loggerFunctions.c"
 //#include "record.h"
 
@@ -50,7 +49,7 @@ int main(int argc, char*argv[])
     char textBuffer[maxNumberOfCharToBeRead];
     struct AllOperations clientOperations[maxOperationsNumber];
     int operationCounter=0;
-    
+    char logMsg[100] = "this is client testing log function..";
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
@@ -59,9 +58,13 @@ int main(int argc, char*argv[])
     //attaching shared memory
     databaseMemoryBegining =shmat(databaseSharedMemory,NULL,0);//Attchment to the shared memory to the record pointer.
 
+    //Log(clientStart, loggerMsgQid, loggerPID);
+    printf("I am the client and logger shared memory ID is %d\n",loggerSharedMemoryID);
+    printf("I am the client and logger msgqid ID is %d\n",loggerMsgQid);
+    printf("I am the client and logger ID is %d\n",loggerPID);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-    //Log(clientStart, loggerMsgQid, loggerPID);
+    
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
@@ -269,7 +272,8 @@ int main(int argc, char*argv[])
         }
             
     }
-
+    
+Log(logMsg, loggerMsgQid, loggerPID, loggerSharedMemoryID);
 }
 
 int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage,int clientManagerMsgQ)

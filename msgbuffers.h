@@ -21,6 +21,19 @@ struct logMsgBuffer
    char messageToLog[maxCharactersOfLogMessage];
 };
 
+struct msgbuff
+{
+    long mtype;
+    int SemaphoreStat;  
+    int SenderPID;
+    int SemaphoreType;
+};
+
+struct loggerMsg{
+   char Msg[100];
+   int senderPID;
+};
+
 
 enum salaryRetrieveOperation {
    smallerThan,

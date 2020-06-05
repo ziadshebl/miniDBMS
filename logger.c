@@ -8,24 +8,52 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <time.h>
+#include <sys/shm.h>
 #include "msgbuffers.h"
+#include "semaphore.h"
 
-struct msgbuff
-{
-    long mtype;
-    int SemaphoreStat;  
-    int SenderPID;
-};
+#define MsgFromLogger 2
+#define AcquireSemaphore 1
+#define ReleaseSemaphore 0
+#define MAX_SIZE 100
+#define UNLOCKED 1
+#define LOCKED 0
+#define EMPTY 0
+#define FULL 1
+#define LOCK 2
+#define DEFAULT 3
 
-int RecieveMessage(int MsgQid);
+
+int PreviousID = 0;
+char PreviousLog[110]  = "DEFAULT";
+struct semaphore empty;
+struct semaphore full;
+struct semaphore lock;
+
+void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
+void SendMessage(int MsgQid, int RecieverPID);
+void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
+void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* ProcessID);
 
 int main(int argc, char* argv[]){
 
 FILE * LoggingOutputFile= fopen("LoggingOutputFile","w+");
 
-char string[100] = "My Name is Karim Wael";
+
 int loggerMsgQid = atoi(argv[1]);
 int loggerSharedMemoryID = atoi(argv[2]);
+
+empty.semaphoreValue = MAX_SIZE;
+full.semaphoreValue = 0;
+lock.semaphoreValue = UNLOCKED;
+
+empty.sleepingProcesses.rear = -1;
+full.sleepingProcesses.rear = -1;
+lock.sleepingProcesses.rear = -1;
+
+struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
+  printf("Data written in memory: %s\n", MemoryAddress->Msg);
+
 
 time_t rawtime;
 struct tm* timeInfo;
@@ -35,50 +63,111 @@ char timeBuffer [80];
 time(&rawtime);
 timeInfo = localtime(&rawtime);
 strftime(timeBuffer,80,"%c:\t", timeInfo);
-
-
-//Printing the current time in the database
-fputs(timeBuffer, LoggingOutputFile);
-
-fputs(string,LoggingOutputFile);
-
-
-
-
-
-fclose(LoggingOutputFile);   
+   
 printf("I am the logger and my pid is %d\n",getpid());
 printf("I am the logger and my msgQid is %d\n",loggerMsgQid);
 printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
 
 while(1){
 
-    //RecieveMessage(loggerMsgQid);
+
+    RecieveMessage(loggerMsgQid,MemoryAddress,LoggingOutputFile,timeBuffer);
 }
 
 }
 
-int RecieveMessage(int MsgQid){
+void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer){
 
+    int SemaphoreValue;
+    int ProcessToResume;
     struct msgbuff message;
 
-    int rec_val = msgrcv(MsgQid, &message, sizeof(message.SemaphoreStat)+sizeof(message.SenderPID), getpid(), IPC_NOWAIT);
+    int rec_val = msgrcv(MsgQid, &message, sizeof(message.SemaphoreStat)+sizeof(message.SenderPID)+sizeof(message.SemaphoreType), getpid(), !IPC_NOWAIT);
 
-    if (rec_val == -1)
+    if (rec_val != -1)
     {
         
-        return -1;
-    }else
-    {
         printf("Message Recieved From %d\n", message.SenderPID);
-        struct msgbuff message2;
+        
 
-    message2.mtype = message.SenderPID;
-    message2.SemaphoreStat = 1;
-    message2.SenderPID = getpid();
+        if(message.SemaphoreStat == AcquireSemaphore ){
+            if(message.SemaphoreType == EMPTY) SemaphoreValue = acquireSemaphore(&empty,message.SenderPID);
+            if(message.SemaphoreType == FULL) SemaphoreValue = acquireSemaphore(&full,message.SenderPID);
+            if(message.SemaphoreType == LOCK) SemaphoreValue = acquireSemaphore(&lock,message.SenderPID);
+            
+            if(SemaphoreValue == 0){
+                        
+                SendMessage(MsgQid,message.SenderPID);
 
-    int send_val = msgsnd(MsgQid, &message2, sizeof(message2.SemaphoreStat)+sizeof(message2.SenderPID), IPC_NOWAIT);
-        return 0;
-    }
+            }
+        }
+        else if(message.SemaphoreStat == ReleaseSemaphore){
+
+            if(message.SemaphoreType == EMPTY) ProcessToResume = releaseSemaphore(&empty);
+            if(message.SemaphoreType == LOCK) ProcessToResume = releaseSemaphore(&lock);
+             if(message.SemaphoreType == FULL) ProcessToResume = releaseSemaphore(&full);
+
+             if(message.SemaphoreType == LOCK){
+            Consume(MemoryAddress,LoggingOutputFile,timeBuffer);
+            SendMessage(MsgQid,message.SenderPID);
+            
+            if(ProcessToResume != 0){
+            SendMessage(MsgQid,ProcessToResume);
+            //raise(SIGSTOP);
+
+            
+
+            }    
+
+            }
+        }
     
+    
+    }   
+}
+void SendMessage(int MsgQid, int RecieverPID){
+
+struct msgbuff message;
+message.mtype = RecieverPID;
+message.SemaphoreStat = MsgFromLogger;
+message.SemaphoreType = DEFAULT;
+message.SenderPID = getpid();
+int send_val = msgsnd(MsgQid, &message, sizeof(message.SemaphoreStat)+sizeof(message.SenderPID)+sizeof(message.SemaphoreType), IPC_NOWAIT);
+
+
+}
+void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer){
+  
+     /*int ret_val = acquireSemaphore(&full,-1);
+     if(ret_val != 0) return;
+     
+     ret_val = acquireSemaphore(&lock,-1);
+      if(ret_val != 0) return;
+      */
+     
+   if(strcmp(MemoryAddress->Msg,PreviousLog)== 0 && MemoryAddress->senderPID == PreviousID) return;
+   printf(".................................inside consume...................... %d\n",MemoryAddress->senderPID);
+
+    char string[110];
+    strcpy(string,MemoryAddress->Msg);
+    int PID = MemoryAddress->senderPID;
+    char LogMsg[110];
+    snprintf(LogMsg, 110, "Process of ID: %d ", PID);
+
+    strcat(LogMsg,string);
+    WriteToFile(LoggingOutputFile,timeBuffer,LogMsg);
+    strcpy(PreviousLog,MemoryAddress->Msg);
+    PreviousID = MemoryAddress->senderPID;
+
+    //releaseSemaphore(&lock);
+    //releaseSemaphore(&empty);
+    
+}
+void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* LogMsg){
+    printf(".................................inside write...................... %s\n", LogMsg);
+    LoggingOutputFile= fopen("LoggingOutputFile","a");
+    fputs(timeBuffer, LoggingOutputFile);
+    fputs(LogMsg,LoggingOutputFile);
+    fprintf(LoggingOutputFile,"\n");
+     fclose(LoggingOutputFile); 
 }
