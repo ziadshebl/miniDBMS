@@ -52,7 +52,7 @@ int main(int argc, char*argv[])
 
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-    Log(logMsg, loggerMsgQid, loggerPID, loggerSharedMemoryID);
+    
     for (int lineCounter=startingLineNumber+1; lineCounter<endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter,textBuffer);
@@ -283,7 +283,7 @@ int main(int argc, char*argv[])
         
     }
     
-
+Log(logMsg, loggerMsgQid, loggerPID, loggerSharedMemoryID);
 
 }
 

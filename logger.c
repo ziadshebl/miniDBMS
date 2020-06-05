@@ -33,6 +33,7 @@ struct semaphore lock;
 void RecieveMessage(int MsgQid);
 void SendMessage(int MsgQid, int RecieverPID);
 void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
+void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* ProcessID);
 
 int main(int argc, char* argv[]){
 
@@ -131,11 +132,10 @@ int send_val = msgsnd(MsgQid, &message, sizeof(message.SemaphoreStat)+sizeof(mes
 }
 void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer){
   
- // acquireSemaphore(&full,getpid());
- // acquireSemaphore(&lock,getpid());
+     //acquireSemaphore(&full,getpid());
+     //acquireSemaphore(&lock,getpid());
 
    if(strcmp(MemoryAddress->Msg,PreviousLog)== 0 && MemoryAddress->senderPID == PreviousID) return;
-    printf("%d %s %s %d %d\n",strcmp(MemoryAddress->Msg,PreviousLog),MemoryAddress->Msg,PreviousLog,PreviousID,MemoryAddress->senderPID);
     char string[110];
     strcpy(string,MemoryAddress->Msg);
     int PID = MemoryAddress->senderPID;
@@ -143,14 +143,18 @@ void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* ti
     snprintf(ProcessID, 110, "Process of ID %d ", PID);
 
     strcat(ProcessID,string);
+    WriteToFile(LoggingOutputFile,timeBuffer,ProcessID);
+    strcpy(PreviousLog,MemoryAddress->Msg);
+    PreviousID = MemoryAddress->senderPID;
+
+   // releaseSemaphore(&lock);
+   // releaseSemaphore(&empty);
+    fclose(LoggingOutputFile);  
+}
+void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* ProcessID){
+
     LoggingOutputFile= fopen("LoggingOutputFile","a");
     fputs(timeBuffer, LoggingOutputFile);
     fputs(ProcessID,LoggingOutputFile);
     fprintf(LoggingOutputFile,"\n");
-    strcpy(PreviousLog,MemoryAddress->Msg);
-    PreviousID = MemoryAddress->senderPID;
-
-  //  releaseSemaphore(&lock);
-   // releaseSemaphore(&empty);
-    fclose(LoggingOutputFile);  
 }

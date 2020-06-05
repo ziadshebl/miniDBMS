@@ -89,11 +89,11 @@ int RecieveMessage(int MsgQid){
 }
 void Log(char* SentLogMessage, int MsgQid, int LoggerPID, int loggerSharedMemoryID ){
 
-    kill(LoggerPID,SIGCONT);
+    
     SendMessageToAcquireSemaphore(MsgQid, LoggerPID, EMPTY);
     RecieveMessage(MsgQid);
 
-    kill(LoggerPID,SIGCONT);
+    
     SendMessageToAcquireSemaphore(MsgQid, LoggerPID, LOCK);
     RecieveMessage(MsgQid);
 

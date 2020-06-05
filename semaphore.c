@@ -52,6 +52,7 @@ int acquireSemaphore(struct semaphore *_semaphore,int pid)
     {
         enqueue(&(_semaphore->sleepingProcesses),pid);
         kill(pid,SIGSTOP);
+       
         return -1;
     }
     //lock is acquired

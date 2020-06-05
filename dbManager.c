@@ -45,6 +45,7 @@ int main(int argc, char*argv[])
     ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.    
     sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
     tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
+    struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
     startOfTheSharedMemory=tuple;
     
     while(1)
