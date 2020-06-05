@@ -10,7 +10,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include "utils.h"
-#include "loggerFunctions.c"
+//#include "loggerFunctions.c"
 
 #define configfileName "config.txt"
 #define maxNumberOfCharToBeRead 1024
