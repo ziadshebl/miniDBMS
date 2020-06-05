@@ -137,3 +137,4 @@ struct queryLoggerMsgBuffer
 ///////////////////////////////////////////////////////////////////////////////
 //Function declerations
 void dumbMemory(struct record* memoryStartAddress,int numberOfEntries);
+void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struct record records[100]);  
