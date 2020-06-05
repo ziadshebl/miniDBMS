@@ -134,6 +134,9 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
         //either output here or after message end
     }
     //output here:
-        
+    FILE * queryLoggingFile = fopen("queryLoggingFile.txt","a");
+    fputs(message,queryLoggingFile);
+    fprintf(queryLoggingFile,"\n");
+    fclose(queryLoggingFile);    
 }
 
