@@ -7,27 +7,26 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
 #include <time.h>
 #include "utils.h"
+#define MSG_SIZE 100
 
-struct msgbuff
-{
-    long mtype;
-    int SemaphoreStat;  
-    int SenderPID;
-};
 
 int RecieveMessage(int MsgQid);
 
 int main(int argc, char* argv[]){
-    //for(int i=0;i<argc;i++)
-      //  printf("logger argv[%d]%s\n",i,argv[i]);
 
 FILE * LoggingOutputFile= fopen("LoggingOutputFile","w+");
 
 char string[100] = "My Name is Karim Wael";
 int loggerMsgQid = atoi(argv[1]);
 int loggerSharedMemoryID = atoi(argv[2]);
+
+ struct loggerMsg* MemoryAddress = (struct loggerMsg*)shmat(loggerSharedMemoryID,NULL,0);
+ //strcpy(*MemoryAddress->Msg,string);
+ //printf("Data written in memory: %s",*MemoryAddress->Msg);  
+
 
 time_t rawtime;
 struct tm* timeInfo;
@@ -49,13 +48,14 @@ fputs(string,LoggingOutputFile);
 
 
 fclose(LoggingOutputFile);   
-//printf("I am the logger and my pid is %d\n",getpid());
-//printf("I am the logger and my msgQid is %d\n",loggerMsgQid);
-//printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
+printf("I am the logger and my pid is %d\n",getpid());
+printf("I am the logger and my msgQid is %d\n",loggerMsgQid);
+printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
 
 while(1){
 
-    //RecieveMessage(loggerMsgQid);
+
+    RecieveMessage(loggerMsgQid);
 }
 
 }
@@ -72,7 +72,7 @@ int RecieveMessage(int MsgQid){
         return -1;
     }else
     {
-        //printf("Message Recieved From %d\n", message.SenderPID);
+        printf("Message Recieved From %d\n", message.SenderPID);
         struct msgbuff message2;
 
     message2.mtype = message.SenderPID;
