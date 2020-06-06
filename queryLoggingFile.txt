@@ -1,0 +1,4 @@
+This is the output of the query operation on salary equalis: 
+
+This is the output of the query operation on salary equalis: 
+

@@ -15,57 +15,58 @@
 #include "utils.h"
 #include "semaphore.h"
 
-int key=0;//Key accumlator.
-int temp;
 
-struct clientManagerMsgBuffer message;//The message struct sent from the client to the manager to add a record.
-struct record *tuple;// A pointer of type record.
-struct record *tupleNext; //A pointer of type record.
+
+struct clientManagerMsgBuffer message;                // The message struct sent from the client to the manager to add a record.
+
+struct record *tuple;                                 // A pointer of type record.
+struct record *tupleNext;                             
 struct record *startOfTheSharedMemory;
+
 struct additionSuccessMessageBuffer onAdditionSuccess;//The message struct sent from the manager to the client to confirm addition.
 struct operationSuccessMessageBuffer onSuccessMessage;//The message struct sent to the manager when acquire and modification is successful.
+
 struct semaphore recordsSemaphores[MAX_RECORDS];
 
-int ManagerClientMessageQid;//A variable to recieve queue id.
-int sharedMemoryId;//A variable to recieve shared memory.
-int messageRecieveStatus;//A variable to check if a message is recieved or not.
-int messageSentStatus;
-int loggerMsgQid;
-int loggerPID;
-int loggerSharedMemoryID;
+int ManagerClientMessageQid;                          //A variable to recieve queue id between manager and client.
+int sharedMemoryId;                                   //A variable to recieve shared memory id of the database.
+int messageRecieveStatus;                             //A variable to check if a message is recieved or not.
+int messageSentStatus;                                //A variable to check if a message is sent or not.
+int loggerMsgQid;                                     //A variable to recieve the id of the message queue of the logger.
+int loggerPID;                                        //A variable to recieve the id of the logger.
+int loggerSharedMemoryID;                             //A variable to recieve the shared memory id of the logger.
+int key=0;                                            // Global variable for the keys of the records added to the database.
 
 
-char loggingMessage[200];
-char templateForSalaryAndKeyLogged[20];
 
-void addNewRecord();
-void logAdding(struct record * tuple);
-void acquireRecord();
-void logAcquiring(int reqsemaphore);
-void logSleeping(int reqsemaphore);
-void releaseRecord();
-void logReleasing(int reqsemaphore);
-void logAwakeningProcess(int processPID,int key);
+char loggingMessage[200];                             //A buffer for the message to be logged.
+char templateForSalaryAndKeyLogged[20];               //Template buffer to concatenate variables to the logging message.
+
+void addNewRecord();                                  //A method to add a record to the database.
+void logAdding(struct record * tuple);                //A method to send to the logger the adding message to be logged.
+void acquireRecord();                                 //A method to acquire a record from the semaphore.
+void logAcquiring(int reqsemaphore);                  //A method to send to the logger the  acquiring message to be logged.
+void logSleeping(int reqsemaphore);                   //A method to send to the logger the  sleeping message to be logged.
+void releaseRecord();                                 //A method to release a record.
+void logReleasing(int reqsemaphore);                  //A method to send to the logger the releasing message to be logged.
+void logAwakeningProcess(int processPID,int key);     //A method to send to the logger the awakening message to be logged.
 
 //MAIN Function.
 int main(int argc, char*argv[])
 {
- 
-    // for(int i=0;i<argc;i++)
-    //     printf("manager argv[%d]%s\n",i,argv[i]);
-    loggerSharedMemoryID = atoi(argv[5]);
+    //Recieving the variables sent from the parent.
+    sharedMemoryId = atoi(argv[1]);                                                     
+    ManagerClientMessageQid = atoi(argv[2]);                                            
     loggerMsgQid = atoi(argv[3]);
     loggerPID = atoi(argv[4]);
-    //printf("I am the manager and logger shared memory ID is %d\n",loggerSharedMemoryID);
-    ManagerClientMessageQid = atoi(argv[2]);//Recieve the message queue id between client and manager from parent process.  
-    //printf("MsgQ PID is: %d\n",ManagerClientMessageQid);  
-    sharedMemoryId = atoi(argv[1]);//Recieve the shared memory id from the parent process.  
-    tuple =shmat(sharedMemoryId,NULL,0);//Attchment to the shared memory to the record pointer.
+    loggerSharedMemoryID = atoi(argv[5]);
+    ///////////////////////////////////////////////
+    tuple =shmat(sharedMemoryId,NULL,0);                                                     //Attchment to the shared memory to the record pointer.
     struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
     startOfTheSharedMemory=tuple;
     tupleNext=tuple+sizeof(struct record);
-    //printf("memory id is: %d,address is:%d\n",sharedMemoryId,tuple);
 
+    //Initiallizing the first record with -1 and an empty string.
     tuple->key=-1;
     tuple->salary=-1;
     strcpy(tuple->name,"");
@@ -82,14 +83,13 @@ int main(int argc, char*argv[])
         messageRecieveStatus=msgrcv(ManagerClientMessageQid, &message, sizeof(message.operationMessage), getpid(), IPC_NOWAIT);//Recieving a message 
         if(messageRecieveStatus>-1)
         {
-            //printf("message soperation is %d \n",message.operationMessage.operationNeeded);
             if(message.operationMessage.operationNeeded==add)
             {
-                addNewRecord();//Adds a new record from the last message sent to the shared memory.
+                addNewRecord();                                                                          //Adds a new record from the last message sent to the shared memory.
             }
             else if(message.operationMessage.operationNeeded==acquire)
             {
-                acquireRecord();//Aquire a record from the last message sent to the shared memory.
+                acquireRecord();                                                                         //Aquire a record from the last message sent to the shared memory.
             }
             else if(message.operationMessage.operationNeeded==release)
             {
@@ -117,17 +117,18 @@ void addNewRecord()
     onAdditionSuccess.key=key;
 
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onAdditionSuccess, sizeof(onAdditionSuccess.key), !IPC_NOWAIT);//Sending a message to the dbmanager with the key of the tuple added.
-    if(messageSentStatus>-1){
+    if(messageSentStatus>-1)
+    {
         printf("Addition Message sent successfully... \n");
     }
-    else{
-        //printf("Error in sending... \n");
+    else
+    {
+        printf("Error in sending... \n");
     }
-
     if(key<999)
     {
-        key++; // to be handled 
-        tuple+=sizeof(struct record);//Incrementing the pointer pointing to the shared memory by the size of the struct added.
+        key++;                                     
+        tuple+=sizeof(struct record);                                                                     //Incrementing the pointer pointing to the shared memory by the size of the struct added.
         tupleNext+=sizeof(struct record);
     }
 }
@@ -136,10 +137,9 @@ void sendReleaseMessage(int pid)
 {
     onSuccessMessage.mtype=pid;
     onSuccessMessage.isOperationDone=1;
-    //onSuccessMessage.numberOfRecords=key-1;
-    messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT);//Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
+    messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT); //Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
     if(messageSentStatus>-1){
-    //printf("Acquire Message sent successfully... \n");
+    printf("Acquire Message sent successfully... \n");
     }
     else{
         printf("Error in sending.... \n");
@@ -147,7 +147,6 @@ void sendReleaseMessage(int pid)
 }
 void acquireRecord()
 {
-    //printf("An acquire request is recieved..... \n");
     int reqsemaphore=message.operationMessage.semaphoreOperationsBuffer.recordKey;
     int returnValue=acquireSemaphore(&recordsSemaphores[reqsemaphore],message.operationMessage.semaphoreOperationsBuffer.clientPID);
     if(returnValue==0)
