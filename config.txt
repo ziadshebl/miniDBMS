@@ -23,12 +23,14 @@ endClient3
 
 client4
 Add	KhaledMohamed	5000
+Modify  1   +50
 Modify	2	-50
 Modify	2	-50
 endClient4
 
 client5
 Add	MostafaAssem	5000
+Modify  1   +90
 Modify	2	-50
 Modify	2	-50
 endClient5
