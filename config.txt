@@ -6,7 +6,7 @@ Add	AbdelrahmanEmam	9000
 Add	ZiadShebl	400
 Modify	1	+200
 Modify	1	-100
-Retrieve NameStarts:   Ziad  Salary: =400
+Retrieve NameStarts:   Ziad  Salary: >=400
 endClient1
 
 client2

@@ -407,6 +407,7 @@ void requireQueryLoggerSemaphore()
     acquireMessage.neededoperation=acquire;
     acquireMessage.mtype=queryLoggerPID;
     acquireMessage.senderPID=getpid();
+    acquireMessage.clientNumber=clientNumber;
 
     int send_val = msgsnd(queryLoggerMsqQid, &acquireMessage, sizeof(struct queryLoggerMsgBuffer)-sizeof(long), !IPC_NOWAIT);
     
@@ -420,6 +421,7 @@ void releaseQueryLoggerSemaphore()
     releaseMessage.neededoperation=acquire;
     releaseMessage.mtype=queryLoggerPID;
     releaseMessage.senderPID=getpid();
+    releaseMessage.clientNumber=clientNumber;
 
     int send_val = msgsnd(queryLoggerMsqQid, &releaseMessage, sizeof(struct queryLoggerMsgBuffer)-sizeof(long), !IPC_NOWAIT);
 }

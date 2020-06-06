@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <sys/shm.h>
 
+
 void dumbMemory(struct record* memoryStartAddress,int numberOfEntries)
 {
     struct record* currentAddress;
@@ -24,12 +25,15 @@ void dumbMemory(struct record* memoryStartAddress,int numberOfEntries)
     }
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
+//Query Logging Function
 void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struct record records[100])
 {
-    char message[5000]="This is the output of the query operation ";
+    char message[300]="The output of the query ";
     int name=0;
     int salary=0;
+    printf("REQUIRED # of records %d ,REQUIRED querlog operation is: %d \n",numberOfRecords,requiredRetrieval.operation);
+
     switch(requiredRetrieval.operation)
     {
         case(nameAndSalary):
@@ -68,37 +72,40 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
         {
             case(smallerThan):
             {
-                strcat(salaryMessage,"smaller than");
+                strcat(salaryMessage,"smaller than ");
                 break;
             }
             case(biggerThan):
             {
-                strcat(salaryMessage,"smaller bigger than");
+                strcat(salaryMessage,"bigger than ");
                 break;
             }
             case(equal):
             {
-                strcat(salaryMessage,"equal");
+                strcat(salaryMessage,"equals ");
                 break;
             }
             case(smallerThanOrEqual):
             {
-                strcat(salaryMessage,"smaller than or equal");
+                strcat(salaryMessage,"smaller than or equal ");
                 break;
             }
             case(biggerThanOrEqual):
             {
-                strcat(salaryMessage,"bigger than or equal");
+                strcat(salaryMessage,"bigger than or equal ");
                 break;
             }
         }
+        char salary[10];
+        sprintf(salary,"%d",requiredRetrieval.salary);
+        strcat(salaryMessage,salary);
         strcat(message,salaryMessage);
     }
 
     if(name)
     {
         if(salary)
-            strcat(message,"and");
+            strcat(message," and ");
 
         char nameMessage[40]="";
         switch(requiredRetrieval.nameOperation)
@@ -107,52 +114,51 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
             case(fullName):
             {
                 strcpy(nameMessage,"name equals: ");
-                strcat(nameMessage,requiredRetrieval.name);
                 break;
             }
             case(nameContains):
             {
                 strcpy(nameMessage,"name contains: ");
-                strcat(nameMessage,requiredRetrieval.name);
             }
         }
+        strcat(nameMessage,requiredRetrieval.name);
         strcat(message,nameMessage);
     }
 
     if(!name & !salary)
         strcat(message,"to retrieve full table ");
     
-    strcat(message,"is: \n");
+    strcat(message," is: \n");
 
-    //either output here or output after message end
+    FILE * queryLoggingFile = fopen("queryLoggingFile.txt","a");
+
+    //outputting Query
+    fflush(queryLoggingFile);
+    fputs(message,queryLoggingFile);
 
     for(int index=0;index<numberOfRecords;index++)
     {
-        if(records[index].key!=-1)
+        if(records[index].key ==-1)
             continue;
             
-        char recordMessage[100]="Key: ";
+        char recordMessage[100]="KEY: ";
         char key[5];
         sprintf(key,"%d",records[index].key);
         strcat(recordMessage,key);
-        strcat(recordMessage,", name: ");
+        strcat(recordMessage," NAME: ");
         strcat(recordMessage,records[index].name);
         char salary[10];
+        strcat(recordMessage,"  SALARY: ");
         sprintf(salary,"%d",records[index].salary);
         strcat(recordMessage,salary);
         strcat(recordMessage,"\n");
 
-        //comment this to output once every record
-        strcat(message,recordMessage);
-        //either output here or after message end
+        fputs(recordMessage,queryLoggingFile);
     }
-    //output here:
-    FILE * queryLoggingFile = fopen("queryLoggingFile.txt","a");
-    fputs(message,queryLoggingFile);
-    fprintf(queryLoggingFile,"\n");
     fclose(queryLoggingFile);    
 }
 
+///////////////////////////////////////////////////////////////////////////////
 //Logger functions
 int SendMessageToAcquireSemaphore(int MsgQid, int RecieverPID,int SemaphoreType){
 

@@ -66,6 +66,7 @@ enum salaryRetrieveOperation {
    salaryNone
 };
 
+//Query-Retrieval Buffers
 enum retrieveOperation {
    nameAndSalary,
    nameOnly,
@@ -118,8 +119,6 @@ struct AllOperations
    struct semaphoreOperationsBuffer  semaphoreOperationsBuffer;
    struct modifyRecordBuffer  modifyBuffer;
    struct retrieveBuffer retrieveBuffer;  
-   //struct releaseRecordBuffer releaseBuffer;
-   
 };
 
 struct clientManagerMsgBuffer
@@ -134,33 +133,26 @@ struct additionSuccessMessageBuffer
    int key;
 };
 
-//TODO:: add number of records
 struct operationSuccessMessageBuffer
 {
    long mtype;
    int isOperationDone;    //0 for failure, 1 for success
-   //int numberOfRecords;
 };
 
-/*
-struct acquireRecordBuffer
-{
-   int clientPID;
-   int keyOfRecordToBeAcquired;
-};
-*/
 //Query Logger Message Buffers
 struct queryLoggerMsgBuffer
 {
     long mtype;
     enum operation neededoperation;
     int senderPID;
+    int clientNumber;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 //Function declerations
 void dumbMemory(struct record* memoryStartAddress,int numberOfEntries);
 void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struct record records[100]);  
+
 
 int SendMessageToAcquireSemaphore(int MsgQid, int RecieverPID,int SemaphoreType);
 int SendMessageToReleaseSemaphore(int MsgQid, int RecieverPID,int SemaphoreType);

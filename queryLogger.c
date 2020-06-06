@@ -14,25 +14,35 @@
 void acquireQueryFileSemaphore(struct queryLoggerMsgBuffer message);
 void releaseQueryFileSemaphore(struct queryLoggerMsgBuffer message);
 void sendReleaseMessage(int pid);
+void logAcquiring(int clientNumber);
+void logReleasing(int clientNumber);
+void logSleeping(int clientNumber);
+void logAwakeningProcess(int PID);
 
 struct semaphore queryFileSemaphore;
 int queryLoggerMsgQid;
+int loggerPID;
+int loggerMsgQid;
+int loggerSharedMem;
 
+char logMessage[100];
+char clientNumberChar[10];
 
 int main(int argc,char* argv[])
 {
-   // for(int i=0;i<argc;i++)
-     //   printf("queryyLogger argv[%d]%s\n",i,argv[i]);
-    struct queryLoggerMsgBuffer receivedMsg;
-    int msgReceiveStats;
+    //Getting passed Argumments by parent
     queryLoggerMsgQid = atoi(argv[1]);
-
-    //printf("I am the queryLogger, Querylogger message Qid is:%d \n",queryLoggerMsgQid);
+    loggerMsgQid=atoi(argv[2]);
+    loggerPID=atoi(argv[3]);
+    loggerSharedMem=atoi(argv[4]);
 
     //intializing semaphore:
     queryFileSemaphore.semaphoreValue=1;
     queryFileSemaphore.sleepingProcesses.rear=-1;
 
+    //Receiving Message
+    struct queryLoggerMsgBuffer receivedMsg;
+    int msgReceiveStats;
     while(1)
     {
          msgReceiveStats=msgrcv(queryLoggerMsgQid, &receivedMsg, sizeof(receivedMsg)-sizeof(long), getpid(), IPC_NOWAIT);//Recieving a message 
@@ -51,14 +61,24 @@ void acquireQueryFileSemaphore(struct queryLoggerMsgBuffer message)
 {
     int returnValue=acquireSemaphore(&queryFileSemaphore,message.senderPID);
     if(returnValue==0)
+    {
         sendReleaseMessage(message.senderPID);
+        logAcquiring(message.clientNumber);
+    }
+    else
+        logSleeping(message.clientNumber);
+        
 }
 
 void releaseQueryFileSemaphore(struct queryLoggerMsgBuffer message)
 {
     int processToAwaken=releaseSemaphore(&queryFileSemaphore);
+    logReleasing(message.clientNumber);
     if(processToAwaken)
+    {
         sendReleaseMessage(processToAwaken);
+        logAwakeningProcess(processToAwaken);
+    }     
 }
 
 void sendReleaseMessage(int pid)
@@ -70,4 +90,39 @@ void sendReleaseMessage(int pid)
     int msgStatus=msgsnd(queryLoggerMsgQid, &releaseMsg, sizeof(releaseMsg)-sizeof(long), !IPC_NOWAIT);
     if(msgStatus==-1)
         printf("ERROR! Query logger cannot send release message!\n");
+}
+
+void logAcquiring(int clientNumber)
+{
+    strcpy(logMessage,"Query logger received an acquire request from client number ");
+    sprintf(clientNumberChar,"%d",clientNumber);
+    strcat(logMessage,clientNumberChar);
+    strcat(logMessage," and the client acquired the Query Logging semaphore successfully! \n");
+    Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
+}
+
+void logReleasing(int clientNumber)
+{
+    strcpy(logMessage,"The client number ");
+    sprintf(clientNumberChar,"%d",clientNumber);
+    strcat(logMessage,clientNumberChar);
+    strcat(logMessage,"just released the Query Logging semaphore! \n");
+    Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
+}
+
+void logSleeping(int clientNumber)
+{
+    strcpy(logMessage,"Query Logger recieved an acquire request from client number: ");
+    sprintf(clientNumberChar,"%d",clientNumber);
+    strcat(logMessage,clientNumberChar);
+    strcat(logMessage,"and the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....");
+    Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
+}
+
+void logAwakeningProcess(int PID)
+{
+     strcpy(logMessage,"Process with PID:");
+     sprintf(clientNumberChar,"%d",PID);
+     strcat(logMessage,clientNumberChar);
+     strcat(logMessage,"has been awaken by the Query Logging semaphore \n");
 }
