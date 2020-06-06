@@ -70,9 +70,6 @@ time(&rawtime);
 timeInfo = localtime(&rawtime);
 strftime(timeBuffer,80,"%c:\t", timeInfo);
    
-printf("I am the logger and my pid is %d\n",getpid());
-printf("I am the logger and my msgQid is %d\n",loggerMsgQid);
-printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
 
 while(1){
 
@@ -93,9 +90,7 @@ void loggerReceiveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * Log
     if (rec_val != -1)
     {
         
-        printf("Message Recieved From %d\n", message.SenderPID);
         
-
         if(message.SemaphoreStat == AcquireSemaphore ){
             if(message.SemaphoreType == EMPTY) SemaphoreValue = acquireSemaphore(&empty,message.SenderPID);
             if(message.SemaphoreType == FULL) SemaphoreValue = acquireSemaphore(&full,message.SenderPID);
@@ -119,10 +114,6 @@ void loggerReceiveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * Log
             
             if(ProcessToResume != 0){
             loggerSendMessage(MsgQid,ProcessToResume);
-            //raise(SIGSTOP);
-
-            
-
             }    
 
             }
@@ -144,15 +135,7 @@ int send_val = msgsnd(MsgQid, &message, sizeof(message.SemaphoreStat)+sizeof(mes
 }
 void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer){
   
-     /*int ret_val = acquireSemaphore(&full,-1);
-     if(ret_val != 0) return;
-     
-     ret_val = acquireSemaphore(&lock,-1);
-      if(ret_val != 0) return;
-      */
-     
    if(strcmp(MemoryAddress->Msg,PreviousLog)== 0 && MemoryAddress->senderPID == PreviousID) return;
-   printf(".................................inside consume...................... %d\n",MemoryAddress->senderPID);
 
     char string[300];
     strcpy(string,MemoryAddress->Msg);
@@ -165,12 +148,9 @@ void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* ti
     strcpy(PreviousLog,MemoryAddress->Msg);
     PreviousID = MemoryAddress->senderPID;
 
-    //releaseSemaphore(&lock);
-    //releaseSemaphore(&empty);
     
 }
 void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* LogMsg){
-    printf(".................................inside write...................... %s\n", LogMsg);
     LoggingOutputFile= fopen("LoggingOutputFile","a");
     fputs(timeBuffer, LoggingOutputFile);
     fputs(LogMsg,LoggingOutputFile);

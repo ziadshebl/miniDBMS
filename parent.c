@@ -156,6 +156,7 @@ int main(){
             }
       }
     printf("All clients finished execution! \n");
+    //sleeps 5 seconds if any other process was busy doing something
     sleep(5);
     terminateProgram(); 
 }
