@@ -50,6 +50,7 @@ void logSleeping(int reqsemaphore);                   //A method to send to the 
 void releaseRecord();                                 //A method to release a record.
 void logReleasing(int reqsemaphore);                  //A method to send to the logger the releasing message to be logged.
 void logAwakeningProcess(int processPID,int key);     //A method to send to the logger the awakening message to be logged.
+void terminateProcess(int sigNum);
 
 //MAIN Function.
 int main(int argc, char*argv[])
@@ -77,6 +78,9 @@ int main(int argc, char*argv[])
         recordsSemaphores[index].semaphoreValue=1;
         recordsSemaphores[index].sleepingProcesses.rear=-1;
     }
+
+    //Changing SIGUSR2 handler to terminateSignal in order to terminate and detach shared memory when prent sends signal
+    signal(SIGUSR2,terminateProcess);
 
     while(1)
     {
@@ -253,3 +257,8 @@ void logAwakeningProcess(int processPID,int key)
     strcpy(loggingMessage,"");
 }
 
+void terminateProcess(int sigNum)
+{
+    shmdt(startOfTheSharedMemory);
+    raise(SIGTERM);
+}

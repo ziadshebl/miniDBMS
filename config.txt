@@ -1,5 +1,5 @@
 noOfClients
-5
+3
 
 client1
 Add	AbdelrahmanEmam	9000

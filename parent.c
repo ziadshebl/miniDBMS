@@ -22,12 +22,21 @@
 
 int searchForAWord(char*wordToBeSearched);
 void readFromALine(int lineNeeded, char*characterFound);
-void terminateProcesses();
+void terminateProgram();
 
 int numberOfClients;
 int dbManagerPID;
 int loggerPID;
 int queryLoggerPID;
+
+int databaseSharedMemory;
+int loggerSharedMemory;
+
+int loggerMsgQid;
+int queryLoggerMsgQid;
+int clientManagerMsgQid; 
+
+int deadClientsCounter=0;
     
 //MAIN Function.
 int main(){
@@ -44,11 +53,6 @@ int main(){
     char queryLoggerPIDChar[20];
     char loggerPIDChar[20];
   
-    int databaseSharedMemory;
-    int loggerSharedMemory;
-    int loggerMsgQid;
-    int queryLoggerMsgQid;
-    int clientManagerMsgQid; 
     int shmkey;
       
     int lineNumber;
@@ -136,29 +140,46 @@ int main(){
             loggerMsgQidChar,loggerPIDChar ,loggerSharedMemoryChar,queryLoggerPIDChar,queryLoggerMsqQidChar,0};
             execve(argv[0], &argv[0], NULL);
         }
-        else
-        {
-            //printf("Client %d PID is: %d",i+1,pid);
-        }
     }
 
-     for (int childNumber=0; childNumber<totalNumberOfChildren; childNumber++){
+    //Receving clients exit code in order to terminate all processes
+     while(deadClientsCounter != numberOfClients){
             int stat_loc;
-            pid = wait(&stat_loc);
-            //if(!(stat_loc & 0x00FF))
-  	       // printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
-
+            pid=waitpid(-1,&stat_loc,WNOHANG);
+            if(!pid)
+                continue;
+            else
+            {
+                deadClientsCounter++;
+                if(!(stat_loc & 0x00FF))
+                    printf("\nA child with pid %d terminated with exit code %d\n", pid, stat_loc>>8);
+            }
       }
-
-    sleep(5);    
-
+    printf("All clients finished execution! \n");
+    sleep(5);
+    terminateProgram(); 
 }
 
-void terminateProcesses()
+void terminateProgram()
 {
+    printf("********************************************\n");
+    printf("NOW TERMINATING PARENT \n");
+
+    ///terminating processes
     kill(loggerPID,SIGTERM);
-    kill(dbManagerPID,SIGTERM);
+    kill(dbManagerPID,SIGUSR2);
     kill(queryLoggerPID,SIGTERM);
+
+    //detaching shared memoried
+    shmctl(databaseSharedMemory,IPC_RMID,NULL); 
+    shmctl(loggerSharedMemory,IPC_RMID,NULL); 
+
+    //destroying message queues
+    msgctl(clientManagerMsgQid, IPC_RMID, (struct msqid_ds *) 0);
+    msgctl(queryLoggerMsgQid, IPC_RMID, (struct msqid_ds *) 0);
+    msgctl(loggerMsgQid, IPC_RMID, (struct msqid_ds *) 0);
+
+    raise(SIGTERM);
 }
 
 int searchForAWord(char*wordToBeSearched)

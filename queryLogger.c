@@ -25,7 +25,7 @@ int loggerPID;
 int loggerMsgQid;
 int loggerSharedMem;
 
-char logMessage[100];
+char logMessage[200];
 char clientNumberChar[10];
 
 int main(int argc,char* argv[])
@@ -106,16 +106,16 @@ void logReleasing(int clientNumber)
     strcpy(logMessage,"The client number ");
     sprintf(clientNumberChar,"%d",clientNumber);
     strcat(logMessage,clientNumberChar);
-    strcat(logMessage,"just released the Query Logging semaphore! \n");
+    strcat(logMessage," just released the Query Logging semaphore! \n");
     Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
 }
 
 void logSleeping(int clientNumber)
 {
-    strcpy(logMessage,"Query Logger recieved an acquire request from client number: ");
+    strcpy(logMessage,"Query Logger recieved an acquire request from client number ");
     sprintf(clientNumberChar,"%d",clientNumber);
     strcat(logMessage,clientNumberChar);
-    strcat(logMessage,"and the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....");
+    strcat(logMessage,", the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....");
     Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
 }
 

@@ -67,12 +67,11 @@ int main(int argc, char *argv[])
     char textBuffer[maxNumberOfCharToBeRead];
     struct AllOperations clientOperations[maxOperationsNumber];
     int operationCounter=0;
-    char logMsg[100] = "this is client testing log function..";
 
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
-
+    
     //attaching shared memory
     startOfTheSharedMemory = shmat(databaseSharedMemory, NULL, 0); //Attchment to the shared memory to the record pointer.
 
@@ -340,7 +339,9 @@ int main(int argc, char *argv[])
         }
     }
     
-    Log(logMsg, loggerMsgQid, loggerPID, loggerSharedMemoryID);
+    //Exiting from the client
+    shmdt(startOfTheSharedMemory);
+    return 1;
 }
 
 void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd)
@@ -418,7 +419,7 @@ void requireQueryLoggerSemaphore()
 void releaseQueryLoggerSemaphore()
 {
     struct queryLoggerMsgBuffer releaseMessage;
-    releaseMessage.neededoperation=acquire;
+    releaseMessage.neededoperation=release;
     releaseMessage.mtype=queryLoggerPID;
     releaseMessage.senderPID=getpid();
     releaseMessage.clientNumber=clientNumber;

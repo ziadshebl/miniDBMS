@@ -30,12 +30,13 @@ char PreviousLog[110]  = "DEFAULT";
 struct semaphore empty;
 struct semaphore full;
 struct semaphore lock;
+struct loggerMsg*MemoryAddress;
 
 void loggerReceiveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
 void loggerSendMessage(int MsgQid, int RecieverPID);
 void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
 void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* ProcessID);
-
+void terminateProcess(int sigNum);
 
 int main(int argc, char* argv[]){
 
@@ -53,8 +54,11 @@ empty.sleepingProcesses.rear = -1;
 full.sleepingProcesses.rear = -1;
 lock.sleepingProcesses.rear = -1;
 
-struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
+ MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
   printf("Data written in memory: %s\n", MemoryAddress->Msg);
+
+//Changing SIGUSR2 handler to terminateSignal in order to terminate and detach shared memory when prent sends signal
+signal(SIGUSR2,terminateProcess);
 
 
 time_t rawtime;
@@ -172,4 +176,10 @@ void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* LogMsg){
     fputs(LogMsg,LoggingOutputFile);
     fprintf(LoggingOutputFile,"\n");
     fclose(LoggingOutputFile); 
+}
+
+void terminateProcess(int sigNum)
+{
+    shmdt(MemoryAddress);
+    raise(SIGTERM);
 }
