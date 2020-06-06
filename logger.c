@@ -171,5 +171,5 @@ void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* LogMsg){
     fputs(timeBuffer, LoggingOutputFile);
     fputs(LogMsg,LoggingOutputFile);
     fprintf(LoggingOutputFile,"\n");
-     fclose(LoggingOutputFile); 
+    fclose(LoggingOutputFile); 
 }

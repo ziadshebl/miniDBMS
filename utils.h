@@ -24,6 +24,7 @@ struct record
 ///Client-Manager message Buffers
 struct addRecordBuffer
 {
+   int clientNumber;
    int clientPID;
    char name[20];
    int salary;
@@ -31,6 +32,7 @@ struct addRecordBuffer
 
 struct semaphoreOperationsBuffer
 {
+   int clientNumber;
    int clientPID;
    int recordKey;
 };

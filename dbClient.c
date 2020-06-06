@@ -24,13 +24,13 @@ void releaseRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int cli
 void modifyRecord(struct clientManagerMsgBuffer toSendMessage);
 int searchForAWord(char *wordToBeSearched);
 void readFromALine(int lineNeeded, char *characterFound);
-struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters]);
+struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters],int clientNumber);
 struct modifyRecordBuffer createModifyRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits], enum modifySalaryOperation salaryOperation);
 struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], enum salaryRetrieveOperation salaryOperation, enum nameRetrieveOperation nameOperation, enum retrieveOperation operation);
 void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd);
 void requireQueryLoggerSemaphore();
 void releaseQueryLoggerSemaphore();
-
+void logModification(int key,int clientNumber,int salary,enum modifySalaryOperation salaryOperation);
 
 int dbManagerPID;
 struct record *startOfTheSharedMemory;
@@ -39,14 +39,20 @@ int queryLoggerMsqQid;
 int queryLoggerPID;
 struct record queryOutput[1000];
 int queryOutputCounter;
+int loggerMsgQid;
+int loggerPID;
+int loggerSharedMemoryID; 
+char loggingMessage[200];
+char templateForSalaryAndKeyLogged[20];
+int clientNumber;
 
 int main(int argc, char *argv[])
 {
-    //for(int i=0;i<argc;i++)
-       //printf("client argv[%d]%s\n",i,argv[i]);
-    int loggerSharedMemoryID = atoi(argv[7]);
-    int loggerMsgQid = atoi(argv[5]);
-    int loggerPID = atoi(argv[6]);
+    // for(int i=0;i<argc;i++)
+    //   printf("client argv[%d]%s\n",i,argv[i]);
+    loggerSharedMemoryID = atoi(argv[7]);
+    loggerMsgQid = atoi(argv[5]);
+    loggerPID = atoi(argv[6]);
     int clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
     dbManagerPID = atoi(argv[4]);
@@ -62,6 +68,7 @@ int main(int argc, char *argv[])
     struct AllOperations clientOperations[maxOperationsNumber];
     int operationCounter=0;
     char logMsg[100] = "this is client testing log function..";
+
     strcpy(clientNumberChar,argv[1]);
     strcat(clientStart,clientNumberChar);
     strcat(clientEnd,clientNumberChar);
@@ -85,7 +92,7 @@ int main(int argc, char *argv[])
         int empId;
         if (sscanf(textBuffer, "Add  %s   %s", empName, empSalaryChar) != 0)
         {
-            struct addRecordBuffer toAddBuffer = createAddRecordBuffer(empSalaryChar, empName);
+            struct addRecordBuffer toAddBuffer = createAddRecordBuffer(empSalaryChar, empName,clientNumber);
             clientOperations[operationCounter].addBuffer = toAddBuffer;
             clientOperations[operationCounter].operationNeeded = add;
             operationCounter++;
@@ -231,6 +238,7 @@ int main(int argc, char *argv[])
             {
                 modifyRecord(toSendMessage);
                 releaseRecordSemaphore(toSendMessage, clientManagerMsgQ);
+                logModification(toSendMessage.operationMessage.modifyBuffer.recordKey,clientNumber,toSendMessage.operationMessage.modifyBuffer.value,toSendMessage.operationMessage.modifyBuffer.salaryOperation);
             }
         }
     }
@@ -353,6 +361,7 @@ int acquireRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int clie
     //acquiring semaphore
     acquireBuffer.recordKey = toSendMessage.operationMessage.modifyBuffer.recordKey;
     acquireBuffer.clientPID = getpid();
+    acquireBuffer.clientNumber=clientNumber;
     toAcquireMessage.operationMessage.semaphoreOperationsBuffer = acquireBuffer;
     toAcquireMessage.mtype = dbManagerPID;
     toAcquireMessage.operationMessage.operationNeeded = acquire;
@@ -375,13 +384,6 @@ void modifyRecord(struct clientManagerMsgBuffer toSendMessage)
 
     else if (toSendMessage.operationMessage.modifyBuffer.salaryOperation == decrease)
         addressToBeModified->salary -= toSendMessage.operationMessage.modifyBuffer.value;
-
-    //printf("\n");
-    //printf("The key to be edited  is: %d \n", addressToBeModified->key);
-    //printf("The salary  after editing is: %d \n", addressToBeModified->salary);
-    //printf("The name is: %s \n", addressToBeModified->name);
-    //printf("Edited...\n");
-    //printf("\n");
 }
 
 void releaseRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
@@ -392,6 +394,7 @@ void releaseRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int cli
     //acquiring semaphore
     releaseBuffer.recordKey = toSendMessage.operationMessage.modifyBuffer.recordKey;
     releaseBuffer.clientPID = getpid();
+    releaseBuffer.clientNumber=clientNumber;
     toReleaseMessage.operationMessage.semaphoreOperationsBuffer = releaseBuffer;
     toReleaseMessage.mtype = dbManagerPID;
     toReleaseMessage.operationMessage.operationNeeded = release;
@@ -474,13 +477,14 @@ void readFromALine(int lineNeeded, char *characterFound)
     }
 }
 
-struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters])
+struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters],int clientNumber)
 {
     struct addRecordBuffer toAddBuffer;
     int empSalary = atoi(empSalaryChar);
     strcpy(toAddBuffer.name, empName);
     toAddBuffer.salary = empSalary;
     toAddBuffer.clientPID = getpid();
+    toAddBuffer.clientNumber=clientNumber;
 
     return toAddBuffer;
 }
@@ -497,7 +501,6 @@ struct modifyRecordBuffer createModifyRecordBuffer(char empSalaryChar[maxSalaryD
     toModifyBuffer.clientPID = getpid();
     return toModifyBuffer;
 }
-
 struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], enum salaryRetrieveOperation salaryOperation, enum nameRetrieveOperation nameOperation, enum retrieveOperation operation)
 {
     struct retrieveBuffer toRetrieveBuffer;
@@ -510,4 +513,31 @@ struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDi
     toRetrieveBuffer.nameOperation = nameOperation;
     toRetrieveBuffer.clientPID = getpid();
     return toRetrieveBuffer;
+}
+void logModification(int key,int clientNumber,int salary,enum modifySalaryOperation salaryOperation)
+{
+    strcat(loggingMessage,"Client number ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",clientNumber);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    if(salaryOperation==decrease)
+    {
+    strcat(loggingMessage," has deducted from the salary of the record: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",key);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    }
+    else
+    {
+        strcat(loggingMessage," has added to the salary of the record: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",key);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    }
+
+    strcat(loggingMessage," a value of: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",salary);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage,"\n");
+            
+    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
+    strcpy(loggingMessage,"");
 }

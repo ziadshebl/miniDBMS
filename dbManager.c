@@ -39,8 +39,13 @@ char loggingMessage[200];
 char templateForSalaryAndKeyLogged[20];
 
 void addNewRecord();
+void logAdding(struct record * tuple);
 void acquireRecord();
+void logAcquiring(int reqsemaphore);
+void logSleeping(int reqsemaphore);
 void releaseRecord();
+void logReleasing(int reqsemaphore);
+void logAwakeningProcess(int processPID,int key);
 
 //MAIN Function.
 int main(int argc, char*argv[])
@@ -107,36 +112,7 @@ void addNewRecord()
     tupleNext->key=-1;
     tupleNext->salary=-1;
     strcpy(tupleNext->name,"");
-
-
-    // printf("............................................................... \n");
-    // printf("The key  is: %d \n",tuple->key);
-    // printf("The salary is: %d \n",tuple->salary);
-    // printf("The name is: %s \n",tuple->name);
-    // printf("............................................................... \n");
-    // printf("\n");
-
-    
-    strcat(loggingMessage,"The manager added a record with a key of: ");
-    sprintf(templateForSalaryAndKeyLogged,"%d",tuple->key);
-    strcat(loggingMessage,templateForSalaryAndKeyLogged);
-
-    strcat(loggingMessage," and with name of: ");
-    strcat(loggingMessage,tuple->name);
-
-    strcat(loggingMessage," and with a salary of: ");
-    sprintf(templateForSalaryAndKeyLogged,"%d",tuple->salary);
-    strcat(loggingMessage,templateForSalaryAndKeyLogged);
-    strcat(loggingMessage,"\n");
-    
-    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
-    strcpy(loggingMessage,"");
-
-
-
-
-
-    //Adding data to message to be sent on addition success.
+    logAdding(tuple);
     onAdditionSuccess.mtype=message.operationMessage.addBuffer.clientPID;
     onAdditionSuccess.key=key;
 
@@ -176,18 +152,105 @@ void acquireRecord()
     int returnValue=acquireSemaphore(&recordsSemaphores[reqsemaphore],message.operationMessage.semaphoreOperationsBuffer.clientPID);
     if(returnValue==0)
     {
-        sendReleaseMessage(message.operationMessage.semaphoreOperationsBuffer.clientPID);
-        //printf("ASemaphore aquired\n");
+            sendReleaseMessage(message.operationMessage.semaphoreOperationsBuffer.clientPID);
+            logAcquiring(reqsemaphore);
+    }
+    else
+    {
+            logSleeping(reqsemaphore);
     }
         
 }
-
 void releaseRecord()
 {
     int reqsemaphore=message.operationMessage.semaphoreOperationsBuffer.recordKey;
     int awakenedProcess=releaseSemaphore(&recordsSemaphores[reqsemaphore]);
+    logReleasing(reqsemaphore);
     //if process is awakened send release record
     if(awakenedProcess!=0)
+    {
         sendReleaseMessage(awakenedProcess);
-}   
+        logAwakeningProcess(awakenedProcess,reqsemaphore);
+
+    }
+}
+void logAdding(struct record * tuple)
+{
+    strcat(loggingMessage,"The manager added a record with a key of: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",tuple->key);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," and with name of: ");
+    strcat(loggingMessage,tuple->name);
+
+    strcat(loggingMessage," and with a salary of: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",tuple->salary);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," for client Number: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",message.operationMessage.addBuffer.clientNumber);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage,"\n");
+    
+    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
+    strcpy(loggingMessage,"");
+}
+void logAcquiring(int reqsemaphore)
+{
+    strcat(loggingMessage,"The manager recieved an acquire request from client number: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",message.operationMessage.semaphoreOperationsBuffer.clientNumber);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," and the proccess acquired the semaphore of key: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",reqsemaphore);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    strcat(loggingMessage,"\n");
+            
+    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
+    strcpy(loggingMessage,"");
+}
+void logSleeping(int reqsemaphore)
+{
+    strcat(loggingMessage,"The manager recieved an acquire request from client number: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",message.operationMessage.semaphoreOperationsBuffer.clientNumber);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," and the proccess did not acquire the semaphore of key: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",reqsemaphore);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," and it is now sleeping ZZZZZZZ..... \n");
+            
+    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
+    strcpy(loggingMessage,"");
+}
+void logReleasing(int reqsemaphore)
+{
+    strcat(loggingMessage,"The client number: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",message.operationMessage.semaphoreOperationsBuffer.clientNumber);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," released the semaphore of record with key: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",reqsemaphore);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    strcat(loggingMessage,"\n");
+            
+    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
+    strcpy(loggingMessage,"");
+}
+void logAwakeningProcess(int processPID,int key)
+{
+    strcat(loggingMessage,"Process with PID: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",processPID);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+
+    strcat(loggingMessage," has been awaken by the semaphore of key: ");
+    sprintf(templateForSalaryAndKeyLogged,"%d",key);
+    strcat(loggingMessage,templateForSalaryAndKeyLogged);
+    strcat(loggingMessage,"\n");
+            
+    Log(loggingMessage,loggerMsgQid,loggerPID,loggerSharedMemoryID);
+    strcpy(loggingMessage,"");
+}
 
