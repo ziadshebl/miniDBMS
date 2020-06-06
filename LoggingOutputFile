@@ -1,0 +1,96 @@
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 0 and with name of: MostafaAssem and with a salary of: 5000 for client Number: 5
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 1 and with name of: AbdelrahmanEmam and with a salary of: 9000 for client Number: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 2 and with name of: KhaledMohamed and with a salary of: 5000 for client Number: 4
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5748 Client number 5 has added to the salary of the record: 1 a value of: 90
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess acquired the semaphore of key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 3 and with name of: KarimWael and with a salary of: 800 for client Number: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 4 and with name of: ZiadShebl and with a salary of: 400 for client Number: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 Process with PID: 5747 has been awaken by the semaphore of key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5747 Client number 4 has added to the salary of the record: 1 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess acquired the semaphore of key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 5 and with name of: NadaKhaled and with a salary of: 5000 for client Number: 3
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5748 Client number 5 has deducted from the salary of the record: 2 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5744 Client number 1 has added to the salary of the record: 1 a value of: 200
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 Process with PID: 5744 has been awaken by the semaphore of key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess acquired the semaphore of key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5747 Client number 4 has deducted from the salary of the record: 2 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess did not acquire the semaphore of key: 2 and it is now sleeping ZZZZZZZ..... 
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 Process with PID: 5745 has been awaken by the semaphore of key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5745 Client number 2 has added to the salary of the record: 1 a value of: 500
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5745 this is client testing log function..
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 Process with PID: 5748 has been awaken by the semaphore of key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5748 Client number 5 has deducted from the salary of the record: 2 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess did not acquire the semaphore of key: 2 and it is now sleeping ZZZZZZZ..... 
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5748 this is client testing log function..
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager added a record with a key of: 6 and with name of: Ahmed and with a salary of: 3000 for client Number: 3
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 Process with PID: 5744 has been awaken by the semaphore of key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5744 Client number 1 has deducted from the salary of the record: 1 a value of: 100
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5747 Client number 4 has deducted from the salary of the record: 2 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 Process with PID: 5747 has been awaken by the semaphore of key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5747 this is client testing log function..
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess acquired the semaphore of key: 0
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 2
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 0
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5746 Client number 3 has deducted from the salary of the record: 0 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The manager recieved an acquire request from client number: 0 and the proccess acquired the semaphore of key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5746 Client number 3 has deducted from the salary of the record: 1 a value of: 50
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5743 The client number: 0 released the semaphore of record with key: 1
+
+Sat Jun  6 08:01:09 2020:	Process of ID: 5746 this is client testing log function..
