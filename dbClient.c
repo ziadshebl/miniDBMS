@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
     
     //Exiting from the client
     shmdt(startOfTheSharedMemory);
-    return 1;
+    return clientNumber;
 }
 
 void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd)
