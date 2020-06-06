@@ -7,10 +7,11 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
 #include <time.h>
 #include <sys/shm.h>
-#include "msgbuffers.h"
 #include "semaphore.h"
+#include "utils.h"
 
 #define MsgFromLogger 2
 #define AcquireSemaphore 1
@@ -30,10 +31,11 @@ struct semaphore empty;
 struct semaphore full;
 struct semaphore lock;
 
-void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
-void SendMessage(int MsgQid, int RecieverPID);
+void loggerReceiveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
+void loggerSendMessage(int MsgQid, int RecieverPID);
 void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer);
 void WriteToFile(FILE * LoggingOutputFile, char* timeBuffer, char* ProcessID);
+
 
 int main(int argc, char* argv[]){
 
@@ -71,12 +73,12 @@ printf("I am the logger and my shared memory ID is %d\n",loggerSharedMemoryID);
 while(1){
 
 
-    RecieveMessage(loggerMsgQid,MemoryAddress,LoggingOutputFile,timeBuffer);
+    loggerReceiveMessage(loggerMsgQid,MemoryAddress,LoggingOutputFile,timeBuffer);
 }
 
 }
 
-void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer){
+void loggerReceiveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* timeBuffer){
 
     int SemaphoreValue;
     int ProcessToResume;
@@ -97,7 +99,7 @@ void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOu
             
             if(SemaphoreValue == 0){
                         
-                SendMessage(MsgQid,message.SenderPID);
+                loggerSendMessage(MsgQid,message.SenderPID);
 
             }
         }
@@ -109,10 +111,10 @@ void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOu
 
              if(message.SemaphoreType == LOCK){
             Consume(MemoryAddress,LoggingOutputFile,timeBuffer);
-            SendMessage(MsgQid,message.SenderPID);
+            loggerSendMessage(MsgQid,message.SenderPID);
             
             if(ProcessToResume != 0){
-            SendMessage(MsgQid,ProcessToResume);
+            loggerSendMessage(MsgQid,ProcessToResume);
             //raise(SIGSTOP);
 
             
@@ -125,7 +127,7 @@ void RecieveMessage(int MsgQid,struct loggerMsg* MemoryAddress, FILE * LoggingOu
     
     }   
 }
-void SendMessage(int MsgQid, int RecieverPID){
+void loggerSendMessage(int MsgQid, int RecieverPID){
 
 struct msgbuff message;
 message.mtype = RecieverPID;

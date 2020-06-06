@@ -1,0 +1,12 @@
+gcc -c semaphore.c 
+gcc -c utils.c
+gcc -c dbClient.c
+gcc -o dbClient.o dbClient.c utils.c
+gcc -c dbManager.c
+gcc -o dbManager.o dbManager.c semaphore.c utils.c
+gcc -o parent.o parent.c utils.c
+gcc -c queryLogger.c
+gcc -o queryLogger.o queryLogger.c semaphore.c utils.c
+gcc -c logger.c
+gcc -o logger.o logger.c semaphore.c utils.c
+

@@ -1,4 +1,3 @@
-#include "msgbuffers.h"
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
@@ -9,6 +8,8 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/shm.h>
+
+#include "utils.h"
 
 #define AcquireSemaphore 1
 #define ReleaseSemaphore 0

@@ -1,7 +1,27 @@
-#include "record.h"
+
+#define NAME_LENGTH 20
 #define maxCharactersOfLogMessage   100
 #define MAX_RECORDS  100
 
+//logger Functions related constants
+#define AcquireSemaphore 1
+#define ReleaseSemaphore 0
+#define EMPTY 0
+#define FULL 1
+#define LOCK 2
+#define DEFAULT 3
+
+//Record struct
+struct record
+{
+   int key;
+   char name [NAME_LENGTH];
+   int salary; 
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//Message Buffers
+///Client-Manager message Buffers
 struct addRecordBuffer
 {
    int clientPID;
@@ -30,7 +50,7 @@ struct msgbuff
 };
 
 struct loggerMsg{
-   char Msg[100];
+   char Msg[300];
    int senderPID;
 };
 
@@ -41,7 +61,7 @@ enum salaryRetrieveOperation {
    equal,
    smallerThanOrEqual,
    biggerThanOrEqual,
-   none
+   salaryNone
 };
 
 enum retrieveOperation {
@@ -53,13 +73,19 @@ enum retrieveOperation {
    fullTable
 };
 
+enum nameRetrieveOperation {
+   fullName,
+   nameContains,
+   nameNone
+};
 struct retrieveBuffer
 {
-   long mtype;
-   char name[20];
+   int clientPID;
+   char name[NAME_LENGTH];
    int salary;
    enum retrieveOperation operation;
    enum salaryRetrieveOperation salaryOperation;
+   enum nameRetrieveOperation nameOperation;
 };
 
 enum modifySalaryOperation {
@@ -106,10 +132,12 @@ struct additionSuccessMessageBuffer
    int key;
 };
 
+//TODO:: add number of records
 struct operationSuccessMessageBuffer
 {
    long mtype;
    int isOperationDone;    //0 for failure, 1 for success
+   //int numberOfRecords;
 };
 
 /*
@@ -119,3 +147,20 @@ struct acquireRecordBuffer
    int keyOfRecordToBeAcquired;
 };
 */
+//Query Logger Message Buffers
+struct queryLoggerMsgBuffer
+{
+    long mtype;
+    enum operation neededoperation;
+    int senderPID;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//Function declerations
+void dumbMemory(struct record* memoryStartAddress,int numberOfEntries);
+void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struct record records[100]);  
+
+int SendMessageToAcquireSemaphore(int MsgQid, int RecieverPID,int SemaphoreType);
+int SendMessageToReleaseSemaphore(int MsgQid, int RecieverPID,int SemaphoreType);
+int RecieveMessage(int MsgQid);
+void Log(char* LogMessage, int MsgQid, int LoggerPID, int loggerSharedMemoryID);
