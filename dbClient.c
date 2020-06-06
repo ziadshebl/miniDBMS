@@ -42,8 +42,8 @@ int queryOutputCounter;
 
 int main(int argc, char *argv[])
 {
-    // for(int i=0;i<argc;i++)
-    //   printf("client argv[%d]%s\n",i,argv[i]);
+    //for(int i=0;i<argc;i++)
+       //printf("client argv[%d]%s\n",i,argv[i]);
     int loggerSharedMemoryID = atoi(argv[7]);
     int loggerMsgQid = atoi(argv[5]);
     int loggerPID = atoi(argv[6]);
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
             //Outputting Query
             queryLog(queryArrayPointer,clientOperations[operation].retrieveBuffer,queryOutput); 
 
-            //releasing semaphore
+            //releasing semaphore   
             releaseQueryLoggerSemaphore();
         }
     }

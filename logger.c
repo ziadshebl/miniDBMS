@@ -150,11 +150,11 @@ void Consume(struct loggerMsg* MemoryAddress, FILE * LoggingOutputFile, char* ti
    if(strcmp(MemoryAddress->Msg,PreviousLog)== 0 && MemoryAddress->senderPID == PreviousID) return;
    printf(".................................inside consume...................... %d\n",MemoryAddress->senderPID);
 
-    char string[110];
+    char string[300];
     strcpy(string,MemoryAddress->Msg);
     int PID = MemoryAddress->senderPID;
-    char LogMsg[110];
-    snprintf(LogMsg, 110, "Process of ID: %d ", PID);
+    char LogMsg[350];
+    snprintf(LogMsg, 350, "Process of ID: %d ", PID);
 
     strcat(LogMsg,string);
     WriteToFile(LoggingOutputFile,timeBuffer,LogMsg);
