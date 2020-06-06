@@ -19,8 +19,8 @@
 #define maxNameCharacters 20
 #define maxIdDigits 6
 
-int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ);
-void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ);
+int acquireRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ);
+void releaseRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ);
 void modifyRecord(struct clientManagerMsgBuffer toSendMessage);
 int searchForAWord(char *wordToBeSearched);
 void readFromALine(int lineNeeded, char *characterFound);
@@ -28,6 +28,10 @@ struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits]
 struct modifyRecordBuffer createModifyRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits], enum modifySalaryOperation salaryOperation);
 struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], enum salaryRetrieveOperation salaryOperation, enum nameRetrieveOperation nameOperation, enum retrieveOperation operation);
 void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd);
+void requireQueryLoggerSemaphore();
+void releaseQueryLoggerSemaphore();
+
+
 int dbManagerPID;
 struct record *startOfTheSharedMemory;
 int numberOfRecords;
@@ -222,11 +226,11 @@ int main(int argc, char *argv[])
         struct additionSuccessMessageBuffer additionSuccessMessage;
         if (toSendMessage.operationMessage.operationNeeded == modify)
         {
-            int operationSucceeded = acquireSemaphore(toSendMessage, clientManagerMsgQ);
+            int operationSucceeded = acquireRecordSemaphore(toSendMessage, clientManagerMsgQ);
             if (operationSucceeded)
             {
                 modifyRecord(toSendMessage);
-                releaseSemaphore(toSendMessage, clientManagerMsgQ);
+                releaseRecordSemaphore(toSendMessage, clientManagerMsgQ);
             }
         }
     }
@@ -316,6 +320,15 @@ int main(int argc, char *argv[])
                 if(queryOutput[recordCounter].key!=-1)
                     printf("RECORD RETRIEVED KEY %d NAME %s Salary %d\n", queryOutput[recordCounter].key,queryOutput[recordCounter].name,queryOutput[recordCounter].salary);
             }
+
+            //Acquiring writing semphore
+            requireQueryLoggerSemaphore();
+
+            //Outputting Query
+            queryLog(queryArrayPointer,clientOperations[operation].retrieveBuffer,queryOutput); 
+
+            //releasing semaphore
+            releaseQueryLoggerSemaphore();
         }
     }
     
@@ -332,7 +345,7 @@ void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int sa
     queryOutputCounter++;
 }
 
-int acquireSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
+int acquireRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
 {
     struct semaphoreOperationsBuffer acquireBuffer;
     struct clientManagerMsgBuffer toAcquireMessage;
@@ -371,7 +384,7 @@ void modifyRecord(struct clientManagerMsgBuffer toSendMessage)
     //printf("\n");
 }
 
-void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
+void releaseRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientManagerMsgQ)
 {
     struct semaphoreOperationsBuffer releaseBuffer;
     struct clientManagerMsgBuffer toReleaseMessage;
@@ -383,12 +396,29 @@ void releaseSemaphore(struct clientManagerMsgBuffer toSendMessage, int clientMan
     toReleaseMessage.mtype = dbManagerPID;
     toReleaseMessage.operationMessage.operationNeeded = release;
     int send_val = msgsnd(clientManagerMsgQ, &toReleaseMessage, sizeof(toReleaseMessage.operationMessage), !IPC_NOWAIT);
+}
 
-    //waiting for sempahore
-    if (send_val > -1)
-    {
-        //printf("Message to acquire %d sent\n", toSendMessage.operationMessage.modifyBuffer.recordKey);
-    }
+void requireQueryLoggerSemaphore()
+{
+    struct queryLoggerMsgBuffer acquireMessage;
+    acquireMessage.neededoperation=acquire;
+    acquireMessage.mtype=queryLoggerPID;
+    acquireMessage.senderPID=getpid();
+
+    int send_val = msgsnd(queryLoggerMsqQid, &acquireMessage, sizeof(struct queryLoggerMsgBuffer)-sizeof(long), !IPC_NOWAIT);
+    
+    struct operationSuccessMessageBuffer operationSuccessMessage;
+    int messageRecieveStatus = msgrcv(queryLoggerMsqQid, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);   
+}
+
+void releaseQueryLoggerSemaphore()
+{
+    struct queryLoggerMsgBuffer releaseMessage;
+    releaseMessage.neededoperation=acquire;
+    releaseMessage.mtype=queryLoggerPID;
+    releaseMessage.senderPID=getpid();
+
+    int send_val = msgsnd(queryLoggerMsqQid, &releaseMessage, sizeof(struct queryLoggerMsgBuffer)-sizeof(long), !IPC_NOWAIT);
 }
 
 int searchForAWord(char *wordToBeSearched)

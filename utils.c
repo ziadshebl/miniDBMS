@@ -128,6 +128,9 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
 
     for(int index=0;index<numberOfRecords;index++)
     {
+        if(records[index].key!=-1)
+            continue;
+            
         char recordMessage[100]="Key: ";
         char key[5];
         sprintf(key,"%d",records[index].key);
