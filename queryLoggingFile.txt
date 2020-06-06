@@ -1,4 +1,2 @@
-This is the output of the query operation on salary equalis: 
-
-This is the output of the query operation on salary equalis: 
-
+The output of the query on salary bigger than or equal 400 is: 
+KEY: 6 NAME: ZiadShebl  SALARY: 400

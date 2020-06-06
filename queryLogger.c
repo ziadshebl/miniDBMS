@@ -25,7 +25,7 @@ int loggerPID;
 int loggerMsgQid;
 int loggerSharedMem;
 
-char logMessage[100];
+char logMessage[200];
 char clientNumberChar[10];
 
 int main(int argc,char* argv[])
@@ -35,6 +35,7 @@ int main(int argc,char* argv[])
     loggerMsgQid=atoi(argv[2]);
     loggerPID=atoi(argv[3]);
     loggerSharedMem=atoi(argv[4]);
+    FILE * queryLoggingFile= fopen("queryLoggingFile.txt","w+");
 
     //intializing semaphore:
     queryFileSemaphore.semaphoreValue=1;
