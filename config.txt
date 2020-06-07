@@ -21,7 +21,7 @@ Add	NadaKhaled	5000
 Add	Ahmed	3000
 Modify	0	-50
 Modify	1	-50
-Retrieve NameStarts: a Salary: 500
+Retrieve NameStarts: a Salary: =500
 Retrieve Name: Any Salary: >5000
 endClient3
 
@@ -31,7 +31,7 @@ Modify  1   +50
 Modify	2	-50
 Modify	2	-50
 Retrieve Name: Any
-Retrieve Name: KhaledMohamed: 5000
+Retrieve Name: KhaledMohamed Salary=5000
 endClient4
 
 client5

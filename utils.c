@@ -36,9 +36,9 @@ void dumbMemory(struct record* memoryStartAddress,int numberOfEntries)
 void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struct record records[100])
 {
     char message[300]="The output of the query ";
+    printf("The passed operation is %d \n",requiredRetrieval.operation);
     int name=0;
     int salary=0;
-    //printf("REQUIRED # of records %d ,REQUIRED querlog operation is: %d \n",numberOfRecords,requiredRetrieval.operation);
 
     switch(requiredRetrieval.operation)
     {
@@ -139,7 +139,6 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
     FILE * queryLoggingFile = fopen("queryLoggingFile.txt","a");
 
     //outputting Query
-    fflush(queryLoggingFile);
     fputs(message,queryLoggingFile);
 
     for(int index=0;index<numberOfRecords;index++)
@@ -161,6 +160,8 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
 
         fputs(recordMessage,queryLoggingFile);
     }
+
+    fputs("\n",queryLoggingFile);
     fclose(queryLoggingFile);    
 }
 

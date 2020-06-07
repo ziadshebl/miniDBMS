@@ -414,7 +414,7 @@ void requireQueryLoggerSemaphore()
     int send_val = msgsnd(queryLoggerMsqQid, &acquireMessage, sizeof(struct queryLoggerMsgBuffer)-sizeof(long), !IPC_NOWAIT);
     
     struct operationSuccessMessageBuffer operationSuccessMessage;
-    int messageRecieveStatus = msgrcv(queryLoggerMsqQid, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT);   
+    int messageRecieveStatus = msgrcv(queryLoggerMsqQid, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT); 
 }
 
 void releaseQueryLoggerSemaphore()
