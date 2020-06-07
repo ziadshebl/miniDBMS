@@ -34,6 +34,7 @@ void logModification(int key,int clientNumber,int salary,enum modifySalaryOperat
 
 int dbManagerPID;
 struct record *startOfTheSharedMemory;
+struct record *startOfTheSharedMemory2;
 int numberOfRecords;
 int queryLoggerMsqQid;
 int queryLoggerPID;
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
     loggerSharedMemoryID = atoi(argv[7]);
     loggerMsgQid = atoi(argv[5]);
     loggerPID = atoi(argv[6]);
-    int clientNumber = atoi(argv[1]);
+    clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
     dbManagerPID = atoi(argv[4]);
     int databaseSharedMemory = atoi(argv[2]);
@@ -74,9 +75,10 @@ int main(int argc, char *argv[])
     
     //attaching shared memory
     startOfTheSharedMemory = shmat(databaseSharedMemory, NULL, 0); //Attchment to the shared memory to the record pointer.
+    startOfTheSharedMemory2=startOfTheSharedMemory;
 
 
-    printf("I am the client ,databasSharedMemID: %d,\n",databaseSharedMemory);
+    //printf("I am the client ,databasSharedMemID: %d,\n",databaseSharedMemory);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
     //Log(clientStart, loggerMsgQid, loggerPID);
@@ -113,11 +115,13 @@ int main(int argc, char *argv[])
         }
         else if((sscanf(textBuffer,"Retrieve Name:   %s  Salary: %s",empName, empSalaryChar)!=0) || (sscanf(textBuffer,"Retrieve NameStarts:   %s  Salary: %s",empName, empSalaryChar)!=0))
         {
+            
             struct retrieveBuffer toRetrieveBuffer;
             enum nameRetrieveOperation nameOperation;
             enum retrieveOperation retrievalOperation;
             if (sscanf(textBuffer, "Retrieve Name:   %s  Salary: %s", empName, empSalaryChar) != 0)
             {
+                
                 if (strcmp(empName, "Any") == 0)
                 {
                     nameOperation = nameNone;
@@ -125,7 +129,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    printf("I am inside\n");
+                    //printf("I am inside\n");
                     nameOperation = fullName;
                     retrievalOperation = salaryOnly;
                 }
@@ -200,6 +204,7 @@ int main(int argc, char *argv[])
             {
                 toRetrieveBuffer = createRetrievalRecordBuffer("None", empName, salaryNone, nameOperation, fullTable);
             }
+        
             clientOperations[operationCounter].retrieveBuffer = toRetrieveBuffer;
             clientOperations[operationCounter].operationNeeded = retrieve;
             operationCounter++;   
@@ -248,45 +253,46 @@ int main(int argc, char *argv[])
         if(clientOperations[operation].operationNeeded==retrieve)
         {
 
-            printf("HereeFirst\n");
+            //printf("HereeFirst\n");
             int recordNumber=0;
             queryOutputCounter=0;
             while(startOfTheSharedMemory->key!=-1)
             {
                 if(clientOperations[operation].retrieveBuffer.nameOperation==nameNone)
                 {
-                    printf("Checking name\n");
+                    //printf("Checking name\n");
                     addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
                 }
                 else if(clientOperations[operation].retrieveBuffer.nameOperation==fullName)
                 {
                     if(strcmp(clientOperations[operation].retrieveBuffer.name,startOfTheSharedMemory->name)==0)
                     {
-                         addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
+                        addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
                     }
                 }
                 else if(clientOperations[operation].retrieveBuffer.nameOperation==nameContains)
                 {
                     if(strstr(startOfTheSharedMemory->name,clientOperations[operation].retrieveBuffer.name)!=0)
                     {
-                        printf("Found Starts with%s\n",startOfTheSharedMemory->name);
+                        //printf("Found Starts with%s\n",startOfTheSharedMemory->name);
                         addToQueryOutput(startOfTheSharedMemory->key,  startOfTheSharedMemory->name,startOfTheSharedMemory->salary);
                     }
                 }
                 startOfTheSharedMemory+=sizeof(struct record);//Incrementing the pointer pointing to the shared memory by the size of the struct added.
                 //recordNumber++;
-
             }
+            startOfTheSharedMemory=startOfTheSharedMemory2;
+
             int queryArrayPointer=0;
             while(queryArrayPointer<queryOutputCounter)
             {
                 if(clientOperations[operation].retrieveBuffer.salaryOperation==salaryNone)
                 {
-                    printf("Checking salary\n");
+                    //printf("Checking salary\n");
                 }
                 else if(clientOperations[operation].retrieveBuffer.salaryOperation==equal)
                 {
-                    printf("Checking Salary =\n");
+                    //printf("Checking Salary =\n");
                     if(queryOutput[queryArrayPointer].salary!=clientOperations[operation].retrieveBuffer.salary)
                     {
                         queryOutput[queryArrayPointer].key=-1;
@@ -322,12 +328,7 @@ int main(int argc, char *argv[])
                 }
                 queryArrayPointer++;
             }
-            for(int recordCounter=0; recordCounter<queryArrayPointer; recordCounter++)
-            {
-                if(queryOutput[recordCounter].key!=-1)
-                    printf("RECORD RETRIEVED KEY %d NAME %s Salary %d\n", queryOutput[recordCounter].key,queryOutput[recordCounter].name,queryOutput[recordCounter].salary);
-            }
-
+            
             //Acquiring writing semphore
             requireQueryLoggerSemaphore();
 
@@ -437,7 +438,7 @@ int searchForAWord(char *wordToBeSearched)
     if (configurationFile == NULL)
     {
 
-        printf("File can't be opened\n");
+        //printf("File can't be opened\n");
     }
     else
     {
@@ -462,7 +463,7 @@ void readFromALine(int lineNeeded, char *characterFound)
     if (configurationFile == NULL)
     {
 
-        printf("Configuration file can't be opened\n");
+        //printf("Configuration file can't be opened\n");
     }
     else
     {

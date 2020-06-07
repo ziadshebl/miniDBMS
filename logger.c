@@ -55,7 +55,7 @@ full.sleepingProcesses.rear = -1;
 lock.sleepingProcesses.rear = -1;
 
  MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
-  printf("Data written in memory: %s\n", MemoryAddress->Msg);
+  //printf("Data written in memory: %s\n", MemoryAddress->Msg);
 
 //Changing SIGUSR2 handler to terminateSignal in order to terminate and detach shared memory when prent sends signal
 signal(SIGUSR2,terminateProcess);

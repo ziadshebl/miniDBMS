@@ -6,12 +6,14 @@ Add	AbdelrahmanEmam	9000
 Add	ZiadShebl	400
 Modify	1	+200
 Modify	1	-100
-Retrieve NameStarts:   Ziad  Salary: >=400
+Retrieve Name: Any Salary: >=3000
+Retrieve Name: KhaledMohamed
 endClient1
 
 client2
 Add	KarimWael	800
 Modify	1	+500
+Retrieve Name: Any Salary: =5000
 endClient2
 
 client3
@@ -19,6 +21,8 @@ Add	NadaKhaled	5000
 Add	Ahmed	3000
 Modify	0	-50
 Modify	1	-50
+Retrieve NameStarts: a Salary: 500
+Retrieve Name: Any Salary: >5000
 endClient3
 
 client4
@@ -26,6 +30,8 @@ Add	KhaledMohamed	5000
 Modify  1   +50
 Modify	2	-50
 Modify	2	-50
+Retrieve Name: Any
+Retrieve Name: KhaledMohamed: 5000
 endClient4
 
 client5
@@ -33,4 +39,7 @@ Add	MostafaAssem	5000
 Modify  1   +90
 Modify	2	-50
 Modify	2	-50
+Modify  6   +100
+Retrieve Name: Any Salary: <=3000
+Retrieve Name: Any Salary: <1000
 endClient5

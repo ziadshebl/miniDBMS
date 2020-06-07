@@ -38,7 +38,7 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
     char message[300]="The output of the query ";
     int name=0;
     int salary=0;
-    printf("REQUIRED # of records %d ,REQUIRED querlog operation is: %d \n",numberOfRecords,requiredRetrieval.operation);
+    //printf("REQUIRED # of records %d ,REQUIRED querlog operation is: %d \n",numberOfRecords,requiredRetrieval.operation);
 
     switch(requiredRetrieval.operation)
     {
