@@ -100,7 +100,7 @@ void logAcquiring(int clientNumber)
     strcat(logMessage,clientNumberChar);
     strcat(logMessage," and the client acquired the Query Logging semaphore successfully! \n");
     Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
-}
+}   
 
 void logReleasing(int clientNumber)
 {
@@ -116,7 +116,7 @@ void logSleeping(int clientNumber)
     strcpy(logMessage,"Query Logger recieved an acquire request from client number ");
     sprintf(clientNumberChar,"%d",clientNumber);
     strcat(logMessage,clientNumberChar);
-    strcat(logMessage,", the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....");
+    strcat(logMessage,", the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....\n");
     Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
 }
 
@@ -125,5 +125,6 @@ void logAwakeningProcess(int PID)
      strcpy(logMessage,"Process with PID:");
      sprintf(clientNumberChar,"%d",PID);
      strcat(logMessage,clientNumberChar);
-     strcat(logMessage,"has been awaken by the Query Logging semaphore \n");
+     strcat(logMessage,"has been awakened by the Query Logging semaphore \n");
+     Log(logMessage,loggerMsgQid,loggerPID,loggerSharedMem);
 }
