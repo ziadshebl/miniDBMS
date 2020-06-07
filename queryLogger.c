@@ -60,11 +60,9 @@ int main(int argc,char* argv[])
 
 void acquireQueryFileSemaphore(struct queryLoggerMsgBuffer message)
 {
-    printf("Acquiring client %d \n",message.clientNumber);
     int returnValue=acquireSemaphore(&queryFileSemaphore,message.senderPID);
     if(returnValue==0)
     {
-        printf("Acquired client %d \n",message.clientNumber);
         sendReleaseMessage(message.senderPID);
         logAcquiring(message.clientNumber);
     }
@@ -106,7 +104,6 @@ void logAcquiring(int clientNumber)
 
 void logReleasing(int clientNumber)
 {
-    printf("CLient %d has just release semph \n",clientNumber);
     strcpy(logMessage,"The client number ");
     sprintf(clientNumberChar,"%d",clientNumber);
     strcat(logMessage,clientNumberChar);

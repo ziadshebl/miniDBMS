@@ -49,8 +49,6 @@ int clientNumber;
 
 int main(int argc, char *argv[])
 {
-    // for(int i=0;i<argc;i++)
-    //   printf("client argv[%d]%s\n",i,argv[i]);
     loggerSharedMemoryID = atoi(argv[7]);
     loggerMsgQid = atoi(argv[5]);
     loggerPID = atoi(argv[6]);
@@ -78,10 +76,9 @@ int main(int argc, char *argv[])
     startOfTheSharedMemory2=startOfTheSharedMemory;
 
 
-    //printf("I am the client ,databasSharedMemID: %d,\n",databaseSharedMemory);
     startingLineNumber = searchForAWord(clientStart);
     endingLineNumber = searchForAWord(clientEnd);
-    //Log(clientStart, loggerMsgQid, loggerPID);
+
     for (int lineCounter = startingLineNumber + 1; lineCounter < endingLineNumber; lineCounter++)
     {
         readFromALine(lineCounter, textBuffer);
@@ -129,13 +126,11 @@ int main(int argc, char *argv[])
                 }
                 else if(strcmp(empName, "Any") != 0 & strcmp(empSalaryChar, "Any") == 0)
                 {
-                    printf("Ana henaaaaaaaaaaa\n");
                     nameOperation = fullName;
                     retrievalOperation = nameOnly;
                 }
                 else
                 {
-                    printf("I am inside\n");
                     nameOperation = fullName;
                     retrievalOperation = salaryOnly;
                 }
@@ -273,7 +268,6 @@ int main(int argc, char *argv[])
         if(clientOperations[operation].operationNeeded==retrieve)
         {
 
-            //printf("HereeFirst\n");
             int recordNumber=0;
             queryOutputCounter=0;
             while(startOfTheSharedMemory->key!=-1)
@@ -354,10 +348,7 @@ int main(int argc, char *argv[])
 
             //Outputting Query
             if(isDone)
-            {
-                printf("client %d is in critical section \n",clientNumber);
                 queryLog(queryArrayPointer,clientOperations[operation].retrieveBuffer,queryOutput);
-            }     
             //releasing semaphore   
             releaseQueryLoggerSemaphore();
         }
