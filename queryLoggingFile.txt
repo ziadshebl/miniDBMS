@@ -1,38 +1,39 @@
+The output of the query on salary equals 5000 and Any is: 
+KEY: 2 NAME: MostafaAssem  SALARY: 5000
+KEY: 3 NAME: NadaKhaled  SALARY: 5000
+KEY: 4 NAME: KhaledMohamed  SALARY: 5000
+
+The output of the query on salary smaller than or equal 3000 and Any is: 
+KEY: 1 NAME: KarimWael  SALARY: 1540
+KEY: 5 NAME: ZiadShebl  SALARY: 400
+
+The output of the query on salary smaller than 1000 and Any is: 
+KEY: 5 NAME: ZiadShebl  SALARY: 400
+
+The output of the query on salary bigger than or equal 3000 and Any is: 
+KEY: 0 NAME: AbdelrahmanEmam  SALARY: 8950
+KEY: 2 NAME: MostafaAssem  SALARY: 4850
+KEY: 3 NAME: NadaKhaled  SALARY: 5000
+KEY: 4 NAME: KhaledMohamed  SALARY: 5000
+KEY: 6 NAME: Ahmed  SALARY: 3100
+
+The output of the query on salary bigger than or equal 3000 is: 
+KEY: 4 NAME: KhaledMohamed  SALARY: 5000
+
 The output of the query on salary equals 500 is: 
 
 The output of the query on salary bigger than 5000 and Any is: 
-KEY: 1 NAME: MostafaAssem  SALARY: 5040
-
-The output of the query on salary smaller than or equal 3000 and Any is: 
-KEY: 0 NAME: KarimWael  SALARY: 750
-KEY: 4 NAME: Ahmed  SALARY: 3000
-
-The output of the query on salary smaller than 1000 and Any is: 
-KEY: 0 NAME: KarimWael  SALARY: 750
-KEY: 6 NAME: ZiadShebl  SALARY: 400
-
-The output of the query on salary bigger than or equal 3000 and Any is: 
-KEY: 1 NAME: MostafaAssem  SALARY: 5140
-KEY: 2 NAME: KhaledMohamed  SALARY: 4900
-KEY: 3 NAME: NadaKhaled  SALARY: 5000
-KEY: 4 NAME: Ahmed  SALARY: 3000
-KEY: 5 NAME: AbdelrahmanEmam  SALARY: 9000
-
-The output of the query on salary bigger than or equal 3000 is: 
-KEY: 2 NAME: KhaledMohamed  SALARY: 4900
-
-The output of the query on salary equals 5000 and Any is: 
-KEY: 3 NAME: NadaKhaled  SALARY: 5000
+KEY: 0 NAME: AbdelrahmanEmam  SALARY: 8950
 
 The output of the query to retrieve full table  is: 
-KEY: 0 NAME: KarimWael  SALARY: 750
-KEY: 1 NAME: MostafaAssem  SALARY: 5690
-KEY: 2 NAME: KhaledMohamed  SALARY: 4800
+KEY: 0 NAME: AbdelrahmanEmam  SALARY: 8950
+KEY: 1 NAME: KarimWael  SALARY: 1490
+KEY: 2 NAME: MostafaAssem  SALARY: 4800
 KEY: 3 NAME: NadaKhaled  SALARY: 5000
-KEY: 4 NAME: Ahmed  SALARY: 3000
-KEY: 5 NAME: AbdelrahmanEmam  SALARY: 9000
-KEY: 6 NAME: ZiadShebl  SALARY: 400
+KEY: 4 NAME: KhaledMohamed  SALARY: 5000
+KEY: 5 NAME: ZiadShebl  SALARY: 400
+KEY: 6 NAME: Ahmed  SALARY: 3100
 
 The output of the query to retrieve full table  is: 
-KEY: 2 NAME: KhaledMohamed  SALARY: 4800
+KEY: 4 NAME: KhaledMohamed  SALARY: 5000
 

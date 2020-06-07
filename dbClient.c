@@ -28,7 +28,7 @@ struct addRecordBuffer createAddRecordBuffer(char empSalaryChar[maxSalaryDigits]
 struct modifyRecordBuffer createModifyRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], char empIdChar[maxIdDigits], enum modifySalaryOperation salaryOperation);
 struct retrieveBuffer createRetrievalRecordBuffer(char empSalaryChar[maxSalaryDigits], char empName[maxNameCharacters], enum salaryRetrieveOperation salaryOperation, enum nameRetrieveOperation nameOperation, enum retrieveOperation operation);
 void addToQueryOutput(int keyToAdd,  char empNameToAdd[maxNameCharacters],int salaryToAdd);
-void requireQueryLoggerSemaphore();
+int  acquireQueryLoggerSemaphore();
 void releaseQueryLoggerSemaphore();
 void logModification(int key,int clientNumber,int salary,enum modifySalaryOperation salaryOperation);
 
@@ -330,11 +330,14 @@ int main(int argc, char *argv[])
             }
             
             //Acquiring writing semphore
-            requireQueryLoggerSemaphore();
+            int isDone=acquireQueryLoggerSemaphore();
 
             //Outputting Query
-            queryLog(queryArrayPointer,clientOperations[operation].retrieveBuffer,queryOutput); 
-
+            if(isDone)
+            {
+                printf("client %d is in critical section \n",clientNumber);
+                queryLog(queryArrayPointer,clientOperations[operation].retrieveBuffer,queryOutput);
+            }     
             //releasing semaphore   
             releaseQueryLoggerSemaphore();
         }
@@ -403,7 +406,7 @@ void releaseRecordSemaphore(struct clientManagerMsgBuffer toSendMessage, int cli
     int send_val = msgsnd(clientManagerMsgQ, &toReleaseMessage, sizeof(toReleaseMessage.operationMessage), !IPC_NOWAIT);
 }
 
-void requireQueryLoggerSemaphore()
+int  acquireQueryLoggerSemaphore()
 {
     struct queryLoggerMsgBuffer acquireMessage;
     acquireMessage.neededoperation=acquire;
@@ -415,6 +418,7 @@ void requireQueryLoggerSemaphore()
     
     struct operationSuccessMessageBuffer operationSuccessMessage;
     int messageRecieveStatus = msgrcv(queryLoggerMsqQid, &operationSuccessMessage, sizeof(operationSuccessMessage.isOperationDone), getpid(), !IPC_NOWAIT); 
+    return operationSuccessMessage.isOperationDone;
 }
 
 void releaseQueryLoggerSemaphore()
