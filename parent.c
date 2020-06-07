@@ -60,15 +60,19 @@ int main(){
     int pid;
 
     queryLoggerMsgQid=msgget(IPC_PRIVATE, 0644);
-    sprintf(queryLoggerMsqQidChar,"%d",queryLoggerMsgQid);  
+    sprintf(queryLoggerMsqQidChar,"%d",queryLoggerMsgQid);
+    printf("The querylogger message queue ID is: %d\n",queryLoggerMsgQid);   
 
     loggerMsgQid = msgget(IPC_PRIVATE, 0644);   //Initalizing the buffer between all processes and the logger
-    sprintf(loggerMsgQidChar,"%d",loggerMsgQid);  
+    sprintf(loggerMsgQidChar,"%d",loggerMsgQid);
+    printf("The logger message queue ID is: %d\n",loggerMsgQid);  
 
     clientManagerMsgQid = msgget(IPC_PRIVATE, 0644); // Initiallizing the buffer between client and the database manager
     sprintf(clientManagerMsgQidChar,"%d",clientManagerMsgQid);
+    printf("The client manager message queue ID is: %d\n",clientManagerMsgQid);
 
     databaseSharedMemory = shmget(KEY,sizeOfMessageBuffer,0644|IPC_CREAT); // shmget returns an identifier in shmid
+    printf("The database shared memory ID is: %d\n",databaseSharedMemory);
     sprintf(databaseSharedMemoryChar,"%d",databaseSharedMemory); 
     fflush(NULL);
 
@@ -84,7 +88,7 @@ int main(){
     
     //Adding number of clients to number of other processes to get total number of children
     totalNumberOfChildren=numberOfClients+3;
-    printf("Number of clients are%d\n",numberOfClients);
+    printf("Number of clients are: %d\n",numberOfClients);
 
     //Fokring children
     //Forking logger
@@ -98,7 +102,7 @@ int main(){
     {
         loggerPID = pid;
         sprintf(loggerPIDChar,"%d",loggerPID);
-        printf("The Logger ID is: %d, logger d in string: %s \n", pid,loggerPIDChar);
+        // printf("The Logger ID is: %d, logger d in string: %s \n", pid,loggerPIDChar);
     }
 
     //Forking QueryLogger

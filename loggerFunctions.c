@@ -83,7 +83,7 @@ int RecieveMessage(int MsgQid){
         return -1;
     }else
     {
-        printf("This is process %d. Message Recieved From Logger\n", getpid());
+        //printf("This is process %d. Message Recieved From Logger\n", getpid());
         return 0;
     }
     
@@ -102,7 +102,7 @@ void Log(char* SentLogMessage, int MsgQid, int LoggerPID, int loggerSharedMemory
     struct loggerMsg* MemoryAddress =(struct loggerMsg*) shmat(loggerSharedMemoryID,NULL,0);
     strcpy(MemoryAddress->Msg,SentLogMessage);
     MemoryAddress->senderPID = getpid();
-    printf("this is process %d and written in memory is: %s\n",getpid() ,MemoryAddress->Msg);
+    //printf("this is process %d and written in memory is: %s\n",getpid() ,MemoryAddress->Msg);
 
     SendMessageToReleaseSemaphore(MsgQid,LoggerPID, LOCK);
     SendMessageToReleaseSemaphore(MsgQid,LoggerPID, FULL);

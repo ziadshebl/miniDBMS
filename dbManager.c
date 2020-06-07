@@ -109,7 +109,7 @@ int main(int argc, char*argv[])
 void addNewRecord()
 {
     //Adding the last message sent data to the shared memory.
-    printf("Now adding new record in Manager\n");
+    //printf("Now adding new record in Manager\n");
 
     tuple->key=key;
     tuple->salary=message.operationMessage.addBuffer.salary;
@@ -125,11 +125,11 @@ void addNewRecord()
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onAdditionSuccess, sizeof(onAdditionSuccess.key), !IPC_NOWAIT);//Sending a message to the dbmanager with the key of the tuple added.
     if(messageSentStatus>-1)
     {
-        printf("Addition Message sent successfully... \n");
+        //printf("Addition Message sent successfully... \n");
     }
     else
     {
-        printf("Error in sending... \n");
+        //printf("Error in sending... \n");
     }
     if(key<999)
     {
@@ -145,10 +145,10 @@ void sendReleaseMessage(int pid)
     onSuccessMessage.isOperationDone=1;
     messageSentStatus=msgsnd(ManagerClientMessageQid, &onSuccessMessage, sizeof(onSuccessMessage.isOperationDone), !IPC_NOWAIT); //Sending a message to the dbmanager with the status of the acquire  of the tuple requested.
     if(messageSentStatus>-1){
-    printf("Acquire Message sent successfully... \n");
+    //printf("Acquire Message sent successfully... \n");
     }
     else{
-        printf("Error in sending.... \n");
+        //printf("Error in sending.... \n");
     }
 }
 void acquireRecord()
