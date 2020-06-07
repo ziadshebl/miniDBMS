@@ -1,134 +1,132 @@
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 0 and with name of: KarimWael and with a salary of: 800 for client Number: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 0 and with name of: AbdelrahmanEmam and with a salary of: 9000 for client Number: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 1 and with name of: NadaKhaled and with a salary of: 5000 for client Number: 3
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 1 and with name of: KhaledMohamed and with a salary of: 5000 for client Number: 4
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 2 and with name of: AbdelrahmanEmam and with a salary of: 9000 for client Number: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 2 and with name of: MostafaAssem and with a salary of: 5000 for client Number: 5
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 3 and with name of: MostafaAssem and with a salary of: 5000 for client Number: 5
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 3 and with name of: KarimWael and with a salary of: 800 for client Number: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 4 and with name of: KhaledMohamed and with a salary of: 5000 for client Number: 4
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 4 and with name of: ZiadShebl and with a salary of: 400 for client Number: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 2 and the proccess acquired the semaphore of key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 5 and with name of: NadaKhaled and with a salary of: 5000 for client Number: 3
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11563 Client number 2 has added to the salary of the record: 1 a value of: 500
+Sun Jun  7 21:56:26 2020:	Process of ID: 12358 Client number 4 has added to the salary of the record: 1 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 5 and with name of: Ahmed and with a salary of: 3000 for client Number: 3
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 4 and the proccess acquired the semaphore of key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager added a record with a key of: 6 and with name of: ZiadShebl and with a salary of: 400 for client Number: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 5 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 5 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 2 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 2 released the semaphore of record with key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 1 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 2 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 4 released the semaphore of record with key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11566 has been awaken by the semaphore of key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12359 has been awaken by the semaphore of key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11566 Client number 5 has added to the salary of the record: 1 a value of: 90
+Sun Jun  7 21:56:26 2020:	Process of ID: 12359 Client number 5 has added to the salary of the record: 1 a value of: 90
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 2 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 4 and the proccess acquired the semaphore of key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 4 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12358 Client number 4 has deducted from the salary of the record: 2 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 3 and the proccess acquired the semaphore of key: 0
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager added a record with a key of: 6 and with name of: Ahmed and with a salary of: 3000 for client Number: 3
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11564 Client number 3 has deducted from the salary of the record: 0 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 5 released the semaphore of record with key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 1 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12356 has been awaken by the semaphore of key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 5 released the semaphore of record with key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 4 released the semaphore of record with key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11565 has been awaken by the semaphore of key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12356 Client number 2 has added to the salary of the record: 1 a value of: 500
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11565 Client number 4 has added to the salary of the record: 1 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 5 and the proccess acquired the semaphore of key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 5 and the proccess acquired the semaphore of key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12359 Client number 5 has deducted from the salary of the record: 2 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11566 Client number 5 has deducted from the salary of the record: 2 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 2 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 3 released the semaphore of record with key: 0
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 4 and the proccess did not acquire the semaphore of key: 2 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 3 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 3 and the proccess acquired the semaphore of key: 0
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 4 released the semaphore of record with key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 2 released the semaphore of record with key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11562 has been awaken by the semaphore of key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12355 has been awaken by the semaphore of key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11562 Client number 1 has added to the salary of the record: 1 a value of: 200
+Sun Jun  7 21:56:26 2020:	Process of ID: 12357 Client number 3 has deducted from the salary of the record: 0 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 5 released the semaphore of record with key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 5 released the semaphore of record with key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 4 and the proccess acquired the semaphore of key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 2 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11565 Client number 4 has deducted from the salary of the record: 2 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12358 has been awaken by the semaphore of key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 5 and the proccess did not acquire the semaphore of key: 2 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12358 Client number 4 has deducted from the salary of the record: 2 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 1 released the semaphore of record with key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 5 and the proccess did not acquire the semaphore of key: 2 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11564 has been awaken by the semaphore of key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 3 released the semaphore of record with key: 0
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11564 Client number 3 has deducted from the salary of the record: 1 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 4 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 3 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 3 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 3 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 4 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 1 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12355 Client number 1 has added to the salary of the record: 1 a value of: 200
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 3 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 4 released the semaphore of record with key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 4 released the semaphore of record with key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12359 has been awaken by the semaphore of key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 3 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12359 Client number 5 has deducted from the salary of the record: 2 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11566 has been awaken by the semaphore of key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 1 released the semaphore of record with key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11566 Client number 5 has deducted from the salary of the record: 2 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12357 has been awaken by the semaphore of key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 4 and the proccess did not acquire the semaphore of key: 2 and it is now sleeping ZZZZZZZ..... 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12357 Client number 3 has deducted from the salary of the record: 1 a value of: 50
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 3 released the semaphore of record with key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 3 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11562 has been awaken by the semaphore of key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 1 and the proccess did not acquire the semaphore of key: 1 and it is now sleeping ZZZZZZZ..... 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 5 released the semaphore of record with key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 3 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11562 Client number 1 has deducted from the salary of the record: 1 a value of: 100
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 5 released the semaphore of record with key: 2
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 Process with PID: 11565 has been awaken by the semaphore of key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 3 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11565 Client number 4 has deducted from the salary of the record: 2 a value of: 50
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The manager recieved an acquire request from client number: 5 and the proccess acquired the semaphore of key: 6
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 1 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12359 Client number 5 has added to the salary of the record: 6 a value of: 100
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11566 Client number 5 has added to the salary of the record: 6 a value of: 100
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 3 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The manager recieved an acquire request from client number: 5 and the proccess acquired the semaphore of key: 6
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 3 released the semaphore of record with key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 1 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 5 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 1 released the semaphore of record with key: 1
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 Process with PID: 12355 has been awaken by the semaphore of key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 1 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 5 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 4 released the semaphore of record with key: 2
+Sun Jun  7 21:56:26 2020:	Process of ID: 12355 Client number 1 has deducted from the salary of the record: 1 a value of: 100
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 1 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 5 released the semaphore of record with key: 6
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11561 The client number: 5 released the semaphore of record with key: 6
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 5 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 4 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12354 The client number: 1 released the semaphore of record with key: 1
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query Logger recieved an acquire request from client number 5, the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 4 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 5 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query Logger recieved an acquire request from client number 4, the proccess did not acquire the semaphore and it is now sleeping ZZZZZZZ.....
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 4 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 1 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 5 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 1 just released the Query Logging semaphore! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 Query logger received an acquire request from client number 5 and the client acquired the Query Logging semaphore successfully! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 Query logger received an acquire request from client number 1 and the client acquired the Query Logging semaphore successfully! 
 
-Sun Jun  7 18:34:36 2020:	Process of ID: 11560 The client number 5 just released the Query Logging semaphore! 
+Sun Jun  7 21:56:26 2020:	Process of ID: 12353 The client number 1 just released the Query Logging semaphore! 
 

@@ -39,6 +39,7 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
     int name=0;
     int salary=0;
     //printf("REQUIRED # of records %d ,REQUIRED querlog operation is: %d \n",numberOfRecords,requiredRetrieval.operation);
+    printf("Required Operation %d\n",requiredRetrieval.operation);
 
     switch(requiredRetrieval.operation)
     {
@@ -66,6 +67,7 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
         }
         case(salaryOnly):
         {
+            printf("Helloooo.............................\n");
             salary=1;
             break;
         }
@@ -108,7 +110,7 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
         strcat(message,salaryMessage);
     }
 
-    if(name)
+    if(name & strcmp(requiredRetrieval.name,"Any")!=0)
     {
         if(salary)
             strcat(message," and ");
