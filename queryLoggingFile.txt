@@ -1,2 +1,2 @@
 The output of the query on salary bigger than or equal 400 is: 
-KEY: 3 NAME: ZiadShebl  SALARY: 400
+KEY: 1 NAME: ZiadShebl  SALARY: 450

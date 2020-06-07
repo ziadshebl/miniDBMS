@@ -56,7 +56,6 @@ int main(){
     int shmkey;
       
     int lineNumber;
-    int totalNumberOfChildren;
     int pid;
 
     queryLoggerMsgQid=msgget(IPC_PRIVATE, 0644);
@@ -81,10 +80,6 @@ int main(){
     lineNumber = searchForAWord("noOfClients");
     readFromALine(lineNumber+1, numberOfClientsCharacter);
     numberOfClients = atoi(numberOfClientsCharacter);
-    
-    //Adding number of clients to number of other processes to get total number of children
-    totalNumberOfChildren=numberOfClients+3;
-    printf("Number of clients are%d\n",numberOfClients);
 
     //Fokring children
     //Forking logger
