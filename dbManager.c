@@ -89,10 +89,12 @@ int main(int argc, char*argv[])
         {
             if(message.operationMessage.operationNeeded==add)
             {
+                
                 addNewRecord();                                                                          //Adds a new record from the last message sent to the shared memory.
             }
             else if(message.operationMessage.operationNeeded==acquire)
             {
+                
                 acquireRecord();                                                                         //Aquire a record from the last message sent to the shared memory.
             }
             else if(message.operationMessage.operationNeeded==release)

@@ -1,12 +1,11 @@
 noOfClients
-3
+5
 
 client1
 Add	AbdelrahmanEmam	9000
 Add	ZiadShebl	400
 Modify	1	+200
 Modify	1	-100
-Retrieve NameStarts:   Ziad  Salary: >=400
 endClient1
 
 client2
@@ -33,4 +32,5 @@ Add	MostafaAssem	5000
 Modify  1   +90
 Modify	2	-50
 Modify	2	-50
+Modify  6       +100
 endClient5

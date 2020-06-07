@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     loggerSharedMemoryID = atoi(argv[7]);
     loggerMsgQid = atoi(argv[5]);
     loggerPID = atoi(argv[6]);
-    int clientNumber = atoi(argv[1]);
+    clientNumber = atoi(argv[1]);
     int clientManagerMsgQ = atoi(argv[3]);
     dbManagerPID = atoi(argv[4]);
     int databaseSharedMemory = atoi(argv[2]);
