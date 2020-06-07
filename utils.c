@@ -36,7 +36,6 @@ void dumbMemory(struct record* memoryStartAddress,int numberOfEntries)
 void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struct record records[100])
 {
     char message[300]="The output of the query ";
-    printf("The passed operation is %d \n",requiredRetrieval.operation);
     int name=0;
     int salary=0;
 
@@ -108,7 +107,7 @@ void queryLog(int numberOfRecords, struct retrieveBuffer requiredRetrieval,struc
         strcat(message,salaryMessage);
     }
 
-    if(name)
+    if(name & strcmp(requiredRetrieval.name,"Any")!=0)
     {
         if(salary)
             strcat(message," and ");

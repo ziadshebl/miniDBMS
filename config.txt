@@ -6,8 +6,8 @@ Add	AbdelrahmanEmam	9000
 Add	ZiadShebl	400
 Modify	1	+200
 Modify	1	-100
-Retrieve Name: Any Salary: >=3000
-Retrieve Name: KhaledMohamed
+Retrieve Name: Any Salary: Any
+Retrieve Name: ZiadShebl Salary: Any 
 endClient1
 
 client2
@@ -21,7 +21,7 @@ Add	NadaKhaled	5000
 Add	Ahmed	3000
 Modify	0	-50
 Modify	1	-50
-Retrieve NameStarts: a Salary: =500
+Retrieve NameStarts: a Salary: =5500
 Retrieve Name: Any Salary: >5000
 endClient3
 
@@ -30,8 +30,8 @@ Add	KhaledMohamed	5000
 Modify  1   +50
 Modify	2	-50
 Modify	2	-50
-Retrieve Name: Any
-Retrieve Name: KhaledMohamed Salary=5000
+Retrieve Name: Any Salary: =900
+
 endClient4
 
 client5

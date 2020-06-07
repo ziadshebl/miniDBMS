@@ -127,9 +127,15 @@ int main(int argc, char *argv[])
                     nameOperation = nameNone;
                     retrievalOperation = nameAndSalary;
                 }
+                else if(strcmp(empName, "Any") != 0 & strcmp(empSalaryChar, "Any") == 0)
+                {
+                    printf("Ana henaaaaaaaaaaa\n");
+                    nameOperation = fullName;
+                    retrievalOperation = nameOnly;
+                }
                 else
                 {
-                    //printf("I am inside\n");
+                    printf("I am inside\n");
                     nameOperation = fullName;
                     retrievalOperation = salaryOnly;
                 }
@@ -146,7 +152,11 @@ int main(int argc, char *argv[])
                     nameOperation = nameContains;
                     retrievalOperation = salaryOnly;
                 }
+                
             }
+      
+            if(strcmp(empSalaryChar, "Any") != 0)
+            {
             if (empSalaryChar[0] == '<' && empSalaryChar[1] != '=')
             {
 
@@ -204,6 +214,16 @@ int main(int argc, char *argv[])
             {
                 toRetrieveBuffer = createRetrievalRecordBuffer("None", empName, salaryNone, nameOperation, fullTable);
             }
+        }
+        else
+        {
+             toRetrieveBuffer = createRetrievalRecordBuffer("None", empName, salaryNone, nameOperation, nameOnly);
+        }
+        if(strcmp(empSalaryChar, "Any") == 0&strcmp(empName, "Any") == 0)
+        {
+            toRetrieveBuffer = createRetrievalRecordBuffer("None", empName, salaryNone, nameOperation, fullTable);
+        }
+        
         
             clientOperations[operationCounter].retrieveBuffer = toRetrieveBuffer;
             clientOperations[operationCounter].operationNeeded = retrieve;
